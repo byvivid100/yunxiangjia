@@ -1,7 +1,7 @@
-/.idea
-/.vscode
-/vendor
+.git/*
+.idea/*
 *.log
-thinkphp
 .env
-.DS_Store
+runtime/
+config/app.php
+config/database.php
