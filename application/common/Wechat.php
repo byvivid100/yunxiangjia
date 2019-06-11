@@ -68,9 +68,8 @@ class Wechat
         $post['notify_url'] = $notify_url;
         $post['trade_type'] = 'JSAPI';
         $post['sign'] = self::getSign($post);
-        print_r($post);exit;
         $res = json_decode(curlRequest($url, $post), true);
-        return $res;
+        print_r($res);exit;
         if (empty($res['errcode'])) {
             return $res;
         }
