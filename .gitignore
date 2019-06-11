@@ -3,3 +3,6 @@
 *.log
 .env
 runtime/
+config/app.php
+config/database.php
+config/api.php

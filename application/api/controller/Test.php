@@ -4,9 +4,17 @@ use Predis;
 use Firebase\JWT\JWT;
 use EasyWeChat\Factory;
 use app\common\Cache;
+use app\common\Wechat;
 
 class Test
 {
+	public function wechat()
+    {
+    	$wechat = new Wechat();
+    	$res = $wechat->unifiedorder('213123123ddasd',1000);
+    	print_r($res);
+
+    }
 
 	public function redis()
     {
@@ -15,8 +23,8 @@ class Test
     	// $res = $redis->get('mjf');
     	// $res = $cache->client();
     	// print_r($res);
-    	$cache->set('', 'access_token', 'access_token');
-    	$res2 = $cache->get('access_token', 'access_token2');
+    	$cache->set('2', 'access_token', 'access_token');
+    	$res2 = $cache->get('access_token', 'access_token');
     	if ($res2 === null) echo 222;
     	print_r($res2);
     	// $redis = connRedis();

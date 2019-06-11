@@ -9,8 +9,10 @@ class Wechat
 
     function __construct()
     {
-        $this->appid = config('appid');
-    	$this->secret = config('secret');
+        $this->appid = config('api.appid');
+    	$this->secret = config('api.secret');
+        $this->mch_id = config('api.mch_id');
+        $this->key = config('api.key');
         $cache = new Cache();
         $this->access_token = $cache->get('access_token');
     }
@@ -49,5 +51,43 @@ class Wechat
         else {
             return $res['errmsg'];
         }
+    }
+
+    public function unifiedorder($out_trade_no, $total_fee)
+    {
+        $url = "https://api.mch.weixin.qq.com/pay/unifiedorder";
+        $notify_url = "https://yxj-dev.bld1907.com";
+        $post['appid'] = $this->appid;
+        $post['mch_id'] = $this->mch_id;
+        $post['nonce_str'] = md5(uniqid(mt_rand(), true));
+        $post['body'] = '云享家支付';
+        $post['out_trade_no'] = $out_trade_no;
+        $post['total_fee'] = $total_fee;
+        // $post['spbill_create_ip'] = $_SERVER['REMOTE_ADDR'];
+        $post['spbill_create_ip'] = get_client_ip();
+        $post['notify_url'] = $notify_url;
+        $post['trade_type'] = 'JSAPI';
+        $post['sign'] = self::getSign($post);
+        print_r($post);exit;
+        $res = json_decode(curlRequest($url, $post), true);
+        return $res;
+        if (empty($res['errcode'])) {
+            return $res;
+        }
+        else {
+            return $res['errmsg'];
+        }
+    }
+
+    private function getSign($arr)
+    {
+        $arr = array_filter($arr);
+        if (isset($arr['sign'])) {
+            unset($arr['sign']);
+        }
+        ksort($arr);
+        $str = http_build_query($arr) . "&key=" . $this->key;
+        $str = urldecode($str);
+        return strtoupper(md5($str));
     }
 }
