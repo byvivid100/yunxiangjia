@@ -19,6 +19,14 @@ function makeUuid()
     return $uuid;
 }
 
+//生成订单号
+function makeOrder()
+{
+    $chars = md5(uniqid(mt_rand(), true));
+    $orderno = substr($chars, 4, 18) . date('YmdHis', time());
+    return $orderno;
+}
+
 //签名
 function sign($openid, $timestr)
 {

@@ -8,6 +8,10 @@ use app\common\Wechat;
 
 class Test
 {
+	public function index()
+    {
+    	return makeOrder();
+    }
 	public function wechat()
     {
     	$wechat = new Wechat();
