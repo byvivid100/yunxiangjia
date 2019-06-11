@@ -7,19 +7,6 @@ use app\common\Wechat;
 
 class User extends Controller
 {
-
-    public function login()
-    {
-        $input = input();
-        $res = model('User')->check($input);
-    }
-
-    public function register()
-    {
-        $input = input();
-        $res = model('User')->register($input);
-    }
-
     public function checkCode()
     {
         $input = input();
@@ -36,7 +23,7 @@ class User extends Controller
             $uuid = makeUuid();
             $user = model('User')->insertUser($uuid, $res['openid']);
         });
-        if (empty($user)) {
+        if (!$user) {
             return 'error';
         }
         $cache = new Cache();
@@ -45,18 +32,32 @@ class User extends Controller
         return $res['openid'];
     }
 
-    public function getUnlimited($page, $scene)
+    public function login()
     {
-        $url = "https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=" . $this->access_token;
-        $post['scene'] = $scene;
-        $post['page'] = $page;
-        $res = curlRequest($url, $post);
-        if (empty($res['errcode'])) {
-            //保存图片到磁盘
-            // file_put_contents($path, $res['buffer']);
-        }
-        else {
-            return $res['errmsg'];
+        $input = input();
+        $res = model('User')->check($input);
+    }
+
+    public function register()
+    {
+        $input = input();
+        $res = model('User')->register($input);
+    }
+
+    public function findUser()
+    {
+        $input = input();
+        $res = model('User')->getUser($input);
+    }
+
+    public function updateUser()
+    {
+        $input = input();
+        \Db::transaction(function(){
+            $res = model('User')->updateUser($input);
+        });
+        if (!$res) {
+            return 'error';
         }
     }
 }

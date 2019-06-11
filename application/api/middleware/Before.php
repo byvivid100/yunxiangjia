@@ -10,16 +10,20 @@ class Before
         	exit('error');
         }
     	$cache = new \app\common\Cache();
-    	$uuid = $cache->get('uuid', $request->param('openid')) ?: db('user')->where(['openid' => $request->param('openid')])->value('uuid');
+    	$uuid = $cache->get('uuid', $request->param('openid'));
     	if (empty($uuid)) {
-    		exit('uuid not found');
+    		$uuid = db('user')->where(['openid' => $request->param('openid')])->value('uuid');
+    		if (empty($uuid)) {
+    			exit('uuid not found');
+    		}
+    		$cache->set($uuid, 'uuid', $request->param('openid'));
     	}
     	$request->uuid = $uuid;
 
         if (config('app_debug')) {
             return $next($request);
         }
-        
+
     	if (empty($request->param('timestr')) || empty($request->param('sign'))) {
         	exit('error');
         }

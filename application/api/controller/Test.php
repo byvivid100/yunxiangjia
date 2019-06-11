@@ -15,8 +15,9 @@ class Test
     	// $res = $redis->get('mjf');
     	// $res = $cache->client();
     	// print_r($res);
-    	$cache->set('wiwiwi2ss2', 'access_token', 'access_token');
-    	$res2 = $cache->get('access_token', 'access_token');
+    	$cache->set('', 'access_token', 'access_token');
+    	$res2 = $cache->get('access_token', 'access_token2');
+    	if ($res2 === null) echo 222;
     	print_r($res2);
     	// $redis = connRedis();
     	// $cache->redis->pconnect('172.0.0.1', 6379);
