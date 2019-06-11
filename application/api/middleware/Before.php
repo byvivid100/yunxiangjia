@@ -6,7 +6,7 @@ class Before
 {
     public function handle($request, \Closure $next)
     {
-        if (empty($request->param('openid')) || empty($request->param('timestr')) || empty($request->param('sign'))) {
+        if (empty($request->param('openid'))) {
         	exit('error');
         }
     	$cache = new \app\common\Cache();
@@ -16,6 +16,13 @@ class Before
     	}
     	$request->uuid = $uuid;
 
+        if (config('app_debug')) {
+            return $next($request);
+        }
+        
+    	if (empty($request->param('timestr')) || empty($request->param('sign'))) {
+        	exit('error');
+        }
     	$sign = sign($request->param('openid'), $request->param('timestr'));
     	if ($sign !== $request->param('sign')) {
     		exit('签名错误');

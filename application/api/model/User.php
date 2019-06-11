@@ -31,7 +31,7 @@ class User extends Model
 
     private function encryptPassword($uuid, $password)
     {
-        $string = $password . substr($chars, 2, 8);
+        $string = $password . substr($uuid, 2, 8);
         return md5($string);
     }
 }
