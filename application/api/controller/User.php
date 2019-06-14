@@ -7,7 +7,7 @@ use app\common\Wechat;
 
 class User extends Controller
 {
-    public function checkCode()
+    public function loadByCode()
     {
         $input = input();
         if (empty($input['js_code'])) {
@@ -23,12 +23,12 @@ class User extends Controller
             $uuid = makeUuid();
             $user = model('User')->insertUser($uuid, $res['openid']);
         });
-        if (!$user) {
+        if (empty($user)) {
             return 'error';
         }
         $cache = new Cache();
-        $cache->set($res['session_key'], 'session_key', $res['openid']);
-        $cache->set($uuid, 'uuid', $res['openid']);
+        $cache->set($res['session_key'], 'session_key', $res['openid'], true);
+        $cache->set($uuid, 'uuid', $res['openid'], true);
         return $res['openid'];
     }
 
