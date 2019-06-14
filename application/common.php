@@ -28,9 +28,11 @@ function makeOrder()
 }
 
 //签名
-function sign($openid, $timestr)
+function sign($input)
 {
-    $data = config('api.sign_data') . $openid . (string)($timestr + 10086);
+    unset($input['sign']);
+    $input['timestr'] += 10086;
+    $data = json_encode($input, JSON_UNESCAPED_UNICODE);
     $key = config('api.sign_key');
     $sign = hash_hmac('SHA1', $data, $key);
     return $sign;

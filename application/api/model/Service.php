@@ -7,16 +7,20 @@ class Service extends Model
 {
 
 
-    public function insertXinfang($input)
+    public function insertService($input)
     {
-        $map['uuid'] = $uuid;
-        // .....
+        $map['user_id'] = $input['uuid'];
+        $map['agent_id'] = $input['agent_id'];
+        $map['form'] = $input['form'];
+        $map['status'] = 0;
+        $map['title'] = $input['title'];
+        $map['price'] = $input['price'];
         $map['insert_time'] = time();
         return self::insertGetId($map);
     }
 
 
-    private function findXinfang($input)
+    public function searchService($input)
     {
         $cache = new Cache();
         $res = $cache->get('service', $input['id']);
@@ -25,5 +29,14 @@ class Service extends Model
             $cache->set($res, 'service', $input['id']);
         }
         return $res;
+    }
+
+    public function updateService($input)
+    {
+        $map['agent_id'] = $input['agent_id'];
+        $map['title'] = $input['title'];
+        $map['price'] = $input['price'];
+        $map['update_time'] = time();
+        return self::where('id', $input['id'])->update($map);
     }
 }

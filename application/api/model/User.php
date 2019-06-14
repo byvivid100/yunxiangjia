@@ -29,13 +29,13 @@ class User extends Model
     }
 
 
-    public function findUser($input)
+    public function searchUser($uuid)
     {
         $cache = new Cache();
-        $res = $cache->get('user', $input['uuid']);
+        $res = $cache->get('user', $uuid);
         if ($res === null) {
-            $res = self::get($input['uuid']);
-            $cache->set($res, 'user', $input['uuid']);
+            $res = self::get($uuid);
+            $cache->set($res, 'user', $uuid);
         }
         return $res;
     }

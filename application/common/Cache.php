@@ -11,23 +11,25 @@ class Cache
     	$this->redis->pconnect($host, $port);
     }
 
+    //返回连接对象
     public function client()
     {
     	return $this->redis;
     }
 
     //获取键值
-    public function get($key, $field = null)
+    public function get($key, $field = null, $isBase = false)
     {
+        $db = $isBase ? 2 : 0;
     	if (!empty($field)) {
-    		$this->redis->select(2);
+    		$this->redis->select($db + 2);
     		if (!$this->redis->hExists($key, $field)) {
     			return null;
     		}
     		return unserialize($this->redis->hGet($key, $field));
     	}
     	else {
-    		$this->redis->select(1);
+    		$this->redis->select($db + 1);
     		if (!$this->redis->exists($key)) {
     			return null;
     		}
@@ -36,17 +38,18 @@ class Cache
     } 
 
     //设置键值,value为非对象
-    public function set($value, $key, $field = null)
+    public function set($value, $key, $field = null, $isBase = false, $expireTime = 7000)
     {
+        $db = $isBase ? 2 : 0;
     	if (!empty($field)) {
-    		$this->redis->select(2);
+    		$this->redis->select($db + 2);
     		$this->redis->hSet($key, $field, serialize($value));
-    		$this->redis->expireAt($key, time() + 7000);
+    		$this->redis->expireAt($key, time() + $expireTime);
     	}
     	else {
-    		$this->redis->select(1);
+    		$this->redis->select($db + 1);
     		$this->redis->set($key, serialize($value));
-    		$this->redis->expireAt($key, time() + 7000);
+    		$this->redis->expireAt($key, time() + $expireTime);
     	}
     } 
 
