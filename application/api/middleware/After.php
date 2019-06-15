@@ -9,7 +9,8 @@ class After
 		$response = $next($request);
 
         $cache = new \app\common\Cache();
-        $cache->flash();
+        $cache->flash(1);
+        $cache->flash(2);
 
         return $response;
     }

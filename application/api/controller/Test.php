@@ -8,6 +8,15 @@ use app\common\Wechat;
 
 class Test
 {
+	public function index()
+    {
+    	return makeOrder();
+    }
+    public function sign()
+    {
+    	$input = input();
+    	return sign($input);
+    }
 	public function wechat()
     {
     	$wechat = new Wechat();
@@ -23,7 +32,7 @@ class Test
     	// $res = $redis->get('mjf');
     	// $res = $cache->client();
     	// print_r($res);
-    	$cache->set('2', 'access_token', 'access_token');
+    	$cache->set('42', 'access_token', 'access_token');
     	$res2 = $cache->get('access_token', 'access_token');
     	if ($res2 === null) echo 222;
     	print_r($res2);

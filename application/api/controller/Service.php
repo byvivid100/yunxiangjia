@@ -8,10 +8,23 @@ use app\common\Wechat;
 class Service extends Controller
 {
 
-    public function normalBuyXinfang()
+    //会员申请服务
+    public function insertService()
     {
         $input = input();
-        $res = model('Service')->insertXinfang($input);
+
+        \Db::transaction(function(){
+        	$input['svid'] = model('Service')->insertService($input);
+        	$applyid = model('Apply')->insertApply($input);
+        });
     }
 
+    //会员更新服务
+    public function updateService()
+    {
+        $input = input();
+        \Db::transaction(function(){
+        	$res = model('Service')->updateService($input);
+        });
+    }
 }

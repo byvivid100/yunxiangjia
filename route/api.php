@@ -1,9 +1,12 @@
 <?php
 
 Route::group('api', [
-    'checkCode'   => 'api/User/checkCode',
+    'loadByCode'   => 'api/User/loadByCode',
+])->method('get');
+
+Route::group('api', [
+    'findUser'   => 'api/User/findUser',
     'sms'   => 'api/Sms/sendSms',
-    'test'   => 'api/Sms/test',
 ])->method('get')->middleware('before');
 
 Route::group('api', [

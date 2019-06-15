@@ -19,10 +19,20 @@ function makeUuid()
     return $uuid;
 }
 
-//签名
-function sign($openid, $timestr)
+//生成订单号
+function makeOrder()
 {
-    $data = config('api.sign_data') . $openid . (string)($timestr + 10086);
+    $chars = md5(uniqid(mt_rand(), true));
+    $orderno = substr($chars, 4, 18) . date('YmdHis', time());
+    return $orderno;
+}
+
+//签名
+function sign($input)
+{
+    unset($input['sign']);
+    $input['timestr'] += 10086;
+    $data = json_encode($input, JSON_UNESCAPED_UNICODE);
     $key = config('api.sign_key');
     $sign = hash_hmac('SHA1', $data, $key);
     return $sign;
