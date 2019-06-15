@@ -6,19 +6,19 @@ class Before
 {
     public function handle($request, \Closure $next)
     {
-//        if (empty($request->param('openid'))) {
-//        	exit('error');
-//        }
+        if (empty($request->param('openid'))) {
+        	exit('error');
+        }
     	$cache = new \app\common\Cache();
-//    	$uuid = $cache->get('uuid', $request->param('openid'));
-//    	if (empty($uuid)) {
-//    		$uuid = db('user')->where(['openid' => $request->param('openid')])->value('uuid');
-//    		if (empty($uuid)) {
-//    			exit('uuid not found');
-//    		}
-//    		$cache->set($uuid, 'uuid', $request->param('openid'));
-//    	}
-//    	$request->uuid = $uuid;
+    	$uuid = $cache->get('uuid', $request->param('openid'));
+    	if (empty($uuid)) {
+    		$uuid = db('user')->where(['openid' => $request->param('openid')])->value('uuid');
+    		if (empty($uuid)) {
+    			exit('uuid not found');
+    		}
+    		$cache->set($uuid, 'uuid', $request->param('openid'));
+    	}
+    	$request->uuid = $uuid;
 
         if (config('app_debug')) {
             return $next($request);
