@@ -9,7 +9,12 @@
 namespace app\api\model;
 
 
-class config
-{
+use think\Model;
 
+class Config extends Model
+{
+    public function getConfig($name)
+    {
+        return self::where('name','=',$name)->value('value');
+    }
 }

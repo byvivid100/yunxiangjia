@@ -4,8 +4,44 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "82c14d2b0ab21495777e49632cf3cb97",
+    "content-hash": "928c5ccd764dd6ec10139dc2d97ca4e2",
     "packages": [
+        {
+            "name": "qcloudsms/qcloudsms_php",
+            "version": "v0.1.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/qcloudsms/qcloudsms_php.git",
+                "reference": "48822045772d343b93c3d505d8a187cd51153c5a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/qcloudsms/qcloudsms_php/zipball/48822045772d343b93c3d505d8a187cd51153c5a",
+                "reference": "48822045772d343b93c3d505d8a187cd51153c5a",
+                "shasum": ""
+            },
+            "require-dev": {
+                "sami/sami": "dev-master"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Qcloud\\Sms\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "qcloud sms php sdk",
+            "keywords": [
+                "php",
+                "qcloud",
+                "sdk",
+                "sms"
+            ],
+            "time": "2018-09-19T07:19:17+00:00"
+        },
         {
             "name": "topthink/framework",
             "version": "v5.1.37.1",
@@ -34,7 +70,28 @@
                 "squizlabs/php_codesniffer": "2.*"
             },
             "type": "think-framework",
-            "notification-url": "https://packagist.org/downloads/"
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "liu21st",
+                    "email": "liu21st@gmail.com"
+                },
+                {
+                    "name": "yunwuxin",
+                    "email": "448901948@qq.com"
+                }
+            ],
+            "description": "the new thinkphp framework",
+            "homepage": "http://thinkphp.cn/",
+            "keywords": [
+                "framework",
+                "orm",
+                "thinkphp"
+            ],
+            "time": "2019-05-28T06:57:29+00:00"
         },
         {
             "name": "topthink/think-installer",
@@ -65,7 +122,17 @@
                     "think\\composer\\": "src"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/"
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "yunwuxin",
+                    "email": "448901948@qq.com"
+                }
+            ],
+            "time": "2018-05-11T06:45:42+00:00"
         }
     ],
     "packages-dev": [],
