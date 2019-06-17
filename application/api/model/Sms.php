@@ -9,6 +9,7 @@
 namespace app\api\model;
 
 
+use app\common\Cache;
 use think\Model;
 use Qcloud\Sms\SmsSingleSender;
 
@@ -28,13 +29,14 @@ class Sms extends Model
     //验证短信
     public function checkCode($params)
     {
-        $code=self::where([['phone','=',$params['phone']],['type','=',$params['type']],['insert_time','>', time()-300]])->value('code');
-        if($params['code']==$code||$code==\model('config')->getConfig('sms_code'))
+        $cache = new Cache();
+        $result=$cache->get($params['phone'],null,true);
+        if($result)
         {
+            if($result['code']==$params['code']&&$result['type']==$params['type'])
             return true;
+            else return false;
         }
-        else{
-            return false;
-        }
+        return false;
     }
 }
