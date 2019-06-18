@@ -17,7 +17,7 @@ class Cache
     	return $this->redis;
     }
 
-    //获取键值
+    //获取键值isBase=true为不清缓存
     public function get($key, $field = null, $isBase = false)
     {
         $db = $isBase ? 2 : 0;
