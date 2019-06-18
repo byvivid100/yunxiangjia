@@ -2,6 +2,7 @@
 namespace app\api\model;
 
 use think\Model;
+use app\common\Cache;
 
 class Apply extends Model
 {
@@ -21,7 +22,7 @@ class Apply extends Model
         $map['status2'] = 0;
         $map['money'] = $input['money'];
         $map['money_adv'] = $input['money_adv'];
-        $map['insert_time'] = time();
+        $map['insert_time'] = $_SERVER['REQUEST_TIME'];
         return self::insertGetId($map);
     }
 

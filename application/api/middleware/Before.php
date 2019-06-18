@@ -12,13 +12,13 @@ class Before
     	$cache = new \app\common\Cache();
         $wechat = new Wechat();
         //获取uuid
-    	$uuid = $cache->get('uuid', $request->param('openid'));
+    	$uuid = $cache->get('uuid', $request->param('openid'), ture);
     	if (empty($uuid)) {
     		$uuid = db('user')->where(['openid' => $request->param('openid')])->value('uuid');
     		if (empty($uuid)) {
     			exit('uuid not found');
     		}
-    		$cache->set($uuid, 'uuid', $request->param('openid'));
+    		$cache->set($uuid, 'uuid', $request->param('openid'), ture);
     	}
 
         if (!config('app_debug')) {
@@ -27,7 +27,7 @@ class Before
             	exit('sign not found');
             }
             //时效
-            if ($request->param('timestr') < time() - 120) {
+            if ($request->param('timestr') < $_SERVER['REQUEST_TIME'] - 120) {
                 exit('签名过期');
             }
             if ($cache->get('sign_' . $request->param('sign'), null, true)) {

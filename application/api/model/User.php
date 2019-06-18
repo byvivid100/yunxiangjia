@@ -2,6 +2,7 @@
 namespace app\api\model;
 
 use think\Model;
+use app\common\Cache;
 
 class User extends Model
 {
@@ -16,7 +17,7 @@ class User extends Model
     {
         $map['phone'] = $input['phone'];
         $map['password'] = self::encryptPassword($input['uuid'], $input['password']);
-        $map['update_time'] = time();
+        $map['update_time'] = $_SERVER['REQUEST_TIME'];
         return self::where('uuid', $input['uuid'])->update($map);
     }
 
@@ -24,7 +25,7 @@ class User extends Model
     {
         $map['uuid'] = $uuid;
         $map['openid'] = $openid;
-        $map['insert_time'] = time();
+        $map['insert_time'] = $_SERVER['REQUEST_TIME'];
         return self::insertGetId($map);
     }
 
@@ -34,7 +35,7 @@ class User extends Model
         $cache = new Cache();
         $res = $cache->get('user', $uuid);
         if ($res === null) {
-            $res = self::get($uuid);
+            $res = self::where('uuid' => $uuid)->find();
             $cache->set($res, 'user', $uuid);
         }
         return $res;
@@ -49,7 +50,7 @@ class User extends Model
         $map['province'] = $input['province'];
         $map['country'] = $input['country'];
         $map['avatarurl'] = $input['avatarurl'];
-        $map['update_time'] = time();
+        $map['update_time'] = $_SERVER['REQUEST_TIME'];
         return self::where('uuid', $input['uuid'])->update($map);
     }
 

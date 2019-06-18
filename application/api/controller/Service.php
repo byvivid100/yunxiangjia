@@ -17,6 +17,7 @@ class Service extends Controller
         	$input['svid'] = model('Service')->insertService($input);
         	$applyid = model('Apply')->insertApply($input);
         });
+        Code::send(200, $res);
     }
 
     //会员更新服务
@@ -26,5 +27,6 @@ class Service extends Controller
         \Db::transaction(function(){
         	$res = model('Service')->updateService($input);
         });
+        Code::send(200, $res);
     }
 }

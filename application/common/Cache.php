@@ -21,7 +21,7 @@ class Cache
     public function get($key, $field = null, $isBase = false)
     {
         $db = $isBase ? 2 : 0;
-    	if (!empty($field)) {
+    	if (strlen($field)) {
     		$this->redis->select($db + 2);
     		if (!$this->redis->hExists($key, $field)) {
     			return null;
@@ -41,17 +41,36 @@ class Cache
     public function set($value, $key, $field = null, $isBase = false, $expireTime = 7000)
     {
         $db = $isBase ? 2 : 0;
-    	if (!empty($field)) {
+    	if (strlen($field)) {
     		$this->redis->select($db + 2);
     		$this->redis->hSet($key, $field, serialize($value));
-    		$this->redis->expireAt($key, time() + $expireTime);
+    		$this->redis->expire($key, $expireTime);
     	}
     	else {
     		$this->redis->select($db + 1);
     		$this->redis->set($key, serialize($value));
-    		$this->redis->expireAt($key, time() + $expireTime);
+    		$this->redis->expire($key, $expireTime);
     	}
     } 
+
+    //锁
+    public function lock($key, $expireTime = 120)
+    {
+        $this->redis->select(5);
+        while (!$this->redis->setnx($key, 1)) {
+            sleep(2);
+        }
+        $this->redis->expire($key, $expireTime);
+    }
+
+    //解锁
+    public function unlock($key)
+    {
+        $this->redis->select(5);
+        if ($this->redis->exists($key)) {
+            $this->redis->del($key);
+        }
+    }
 
     //数据持久化
     public function save()
@@ -62,7 +81,7 @@ class Cache
     //清空缓存
     public function flash($id = null)
     {
-    	if (!empty($id)) {
+    	if (strlen($id)) {
     		$this->redis->select($id);
     		$this->redis->flushDB();
     	}

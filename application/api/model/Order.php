@@ -2,6 +2,7 @@
 namespace app\api\model;
 
 use think\Model;
+use app\common\Cache;
 
 class Order extends Model
 {
@@ -9,6 +10,8 @@ class Order extends Model
     public function insertOrder($apply, $propety)
     {
         $map['apply_id'] = $apply['id'];
+        $target_apply_id = model('Apply')->where(['ppid' => $propety['ppid'], 'agent_id' => $propety['agent_id'], 'status' => 5)->value('id');
+        $map['target_apply_id'] = $target_agent_id;
         // $map['target_apply_id'] = $input['target_apply_id'];
         $map['ppid'] = $propety['id'];
         $map['title'] = $propety['title'];
@@ -21,7 +24,7 @@ class Order extends Model
         // $map['type2'] = $propety['type2'];
         $map['status'] = 1;
         $map['status2'] = 0;
-        $map['insert_time'] = time();
+        $map['insert_time'] = $_SERVER['REQUEST_TIME'];
         return self::insertGetId($map);
     }
 

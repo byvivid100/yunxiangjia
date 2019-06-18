@@ -12,7 +12,12 @@ class Propety extends Controller
     public function insertPropety()
     {
         $input = input();
-        $res = model('Propety')->insertPropety($input);
+        if (empty($input['id'])) exit;
+        \Db::transaction(function(){
+            $res = model('Propety')->insertPropety($input);
+            $res2 = db('apply')->where('id' => $input['id'])->update(['status2' => 5, 'ppid' =>$res, 'update_time' => $_SERVER['REQUEST_TIME']]);
+        });
+        Code::send(200, $res);
     }
 
     //经纪人更新商品
@@ -22,6 +27,7 @@ class Propety extends Controller
         \Db::transaction(function(){
         	$res = model('Propety')->updatePropety($input);
         });
+        Code::send(200, $res);
     }
 
 }

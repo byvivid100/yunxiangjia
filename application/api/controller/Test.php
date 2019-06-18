@@ -10,7 +10,10 @@ class Test
 {
 	public function index()
     {
-    	return makeOrder();
+    	// return makeOrder();
+        $cache = new Cache();
+        bind('cache',$cache);
+        print_r(app('cache')->client());
     }
     public function sign()
     {
@@ -59,9 +62,9 @@ class Test
 		$token = array(
 		    "iss" => "yxj",
 		    "aud" => "majiafeng",
-		    "nbf" => (time() - 10),
-		    "iat" => time(),
-		    "exp" => (time() + 30),
+		    "nbf" => ($_SERVER['REQUEST_TIME'] - 10),
+		    "iat" => $_SERVER['REQUEST_TIME'],
+		    "exp" => ($_SERVER['REQUEST_TIME'] + 30),
 		);
 
 		$jwt = JWT::encode($token, $key);
@@ -71,7 +74,7 @@ class Test
 		$decoded_array = (array) $decoded;
 		// print_r($decoded_array);
 
-		$key = time();
+		$key = $_SERVER['REQUEST_TIME'];
 		$sign = hash_hmac('SHA1', $jwt, $key);
 		// $sign = JWT::sign($jwt, $key, 'HS256');
 		echo $sign;

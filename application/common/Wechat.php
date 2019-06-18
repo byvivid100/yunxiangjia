@@ -48,14 +48,13 @@ class Wechat
     }
 
     //统一支付接口
-    public function unifiedorder($out_trade_no, $total_fee)
+    public function unifiedorder($out_trade_no, $total_fee, $notify_url, $body = '云享家支付')
     {
         $url = "https://api.mch.weixin.qq.com/pay/unifiedorder";
-        $notify_url = "https://yxj-dev.bld1907.com";
         $post['appid'] = $this->appid;
         $post['mch_id'] = $this->mch_id;
         $post['nonce_str'] = md5(uniqid(mt_rand(), true));
-        $post['body'] = '云享家支付';
+        $post['body'] = $body;
         $post['out_trade_no'] = $out_trade_no;
         $post['total_fee'] = $total_fee;
         // $post['spbill_create_ip'] = $_SERVER['REMOTE_ADDR'];
@@ -63,14 +62,7 @@ class Wechat
         $post['notify_url'] = $notify_url;
         $post['trade_type'] = 'JSAPI';
         $post['sign'] = self::getSign($post);
-        $res = json_decode(curlRequest($url, $post), true);
-        print_r($res);exit;
-        if (empty($res['errcode'])) {
-            return $res;
-        }
-        else {
-            return $res['errmsg'];
-        }
+        return json_decode(curlRequest($url, $post), true);
     }
 
     //用户提现
@@ -87,14 +79,7 @@ class Wechat
         $post['desc'] = '云享家退款';
         $post['spbill_create_ip'] = get_client_ip();
         $post['sign'] = self::getSign($post);
-        $res = json_decode(curlRequest($url, $post), true);
-        print_r($res);exit;
-        if (empty($res['errcode'])) {
-            return $res;
-        }
-        else {
-            return $res['errmsg'];
-        }
+        return json_decode(curlRequest($url, $post), true);
     }
 
     //支付签名
@@ -108,5 +93,44 @@ class Wechat
         $str = http_build_query($arr) . "&key=" . $this->key;
         $str = urldecode($str);
         return strtoupper(md5($str));
+    }
+
+    public function ToXml($values)
+    {
+        if(!is_array($values) || count($values) <= 0)
+        {
+            return ("数组数据异常！");
+        }
+        
+        $xml = "<xml>";
+        foreach ($values as $key=>$val)
+        {
+            if (is_numeric($val)){
+                $xml.="<".$key.">".$val."</".$key.">";
+            }else{
+                $xml.="<".$key."><![CDATA[".$val."]]></".$key.">";
+            }
+        }
+        $xml.="</xml>";
+        return $xml; 
+    }
+
+    public function FromXml($xml)
+    {   
+        if(!$xml){
+            return ("xml数据异常！");
+        }
+        libxml_disable_entity_loader(true);
+        $values = json_decode(json_encode(simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA)), true);
+        return $values;
+    }
+
+    public function replynotify($data, $needSign = false)
+    {
+        if ($needSign) {
+            $data['sign'] = self::getSign($data);
+        }
+        $xml = self::ToXml($data);
+        echo $xml;
     }
 }

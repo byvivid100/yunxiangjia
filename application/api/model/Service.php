@@ -2,6 +2,7 @@
 namespace app\api\model;
 
 use think\Model;
+use app\common\Cache;
 
 class Service extends Model
 {
@@ -15,7 +16,7 @@ class Service extends Model
         $map['status'] = 0;
         $map['title'] = $input['title'];
         $map['price'] = $input['price'];
-        $map['insert_time'] = time();
+        $map['insert_time'] = $_SERVER['REQUEST_TIME'];
         return self::insertGetId($map);
     }
 
@@ -36,7 +37,7 @@ class Service extends Model
         $map['agent_id'] = $input['agent_id'];
         $map['title'] = $input['title'];
         $map['price'] = $input['price'];
-        $map['update_time'] = time();
+        $map['update_time'] = $_SERVER['REQUEST_TIME'];
         return self::where('id', $input['id'])->update($map);
     }
 }

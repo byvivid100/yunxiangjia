@@ -22,6 +22,8 @@ class User extends Controller
         \Db::transaction(function(){
             $uuid = makeUuid();
             $user = model('User')->insertUser($uuid, $res['openid']);
+            $user_record = model('UserRecord')->insertUserRecord($uuid, 'Mini Program');
+            $user_account = model('UserAccount')->insertAccount($uuid);
         });
         if (empty($user)) {
             return 'error';

@@ -2,6 +2,7 @@
 namespace app\api\model;
 
 use think\Model;
+use app\common\Cache;
 
 class Propety extends Model
 {
@@ -9,14 +10,14 @@ class Propety extends Model
 
     public function insertPropety($input)
     {
-        $map['user_id'] = $input['uuid'];
+        $map['user_id'] = $input['user_id'];
         $map['agent_id'] = $input['agent_id'];
         $map['form'] = $input['form'];
         $map['status'] = 0;
         $map['count'] = 0;
         $map['title'] = $input['title'];
         $map['price'] = $input['price'];
-        $map['insert_time'] = time();
+        $map['insert_time'] = $_SERVER['REQUEST_TIME'];
         return self::insertGetId($map);
     }
 
@@ -37,7 +38,7 @@ class Propety extends Model
         $map['agent_id'] = $input['agent_id'];
         $map['title'] = $input['title'];
         $map['price'] = $input['price'];
-        $map['update_time'] = time();
+        $map['update_time'] = $_SERVER['REQUEST_TIME'];
         return self::where('id', $input['id'])->update($map);
     }
 }
