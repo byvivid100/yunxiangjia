@@ -12,13 +12,13 @@ class Before
     	$cache = new \app\common\Cache();
         $wechat = new \app\common\Wechat();
         //获取uuid
-    	$uuid = $cache->get('uuid', $request->param('openid'), ture);
+    	$uuid = $cache->get('uuid', $request->param('openid'), true);
     	if (empty($uuid)) {
     		$uuid = db('user')->where(['openid' => $request->param('openid')])->value('uuid');
     		if (empty($uuid)) {
     			exit('uuid not found');
     		}
-    		$cache->set($uuid, 'uuid', $request->param('openid'), ture);
+    		$cache->set($uuid, 'uuid', $request->param('openid'), true);
     	}
 
         if (!config('app_debug')) {
