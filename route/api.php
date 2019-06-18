@@ -12,4 +12,5 @@ Route::group('api', [
 
 Route::group('api', [
     'register'   => 'api/User/register',
+    'applyAgent/apply'=>'api/ApplyAgent/apply'
 ])->method('post')->middleware(['before', 'after']);
