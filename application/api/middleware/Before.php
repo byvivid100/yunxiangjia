@@ -10,7 +10,7 @@ class Before
         	exit('openid not found');
         }
     	$cache = new \app\common\Cache();
-        $wechat = new Wechat();
+        $wechat = new \app\common\Wechat();
         //获取uuid
     	$uuid = $cache->get('uuid', $request->param('openid'), ture);
     	if (empty($uuid)) {
