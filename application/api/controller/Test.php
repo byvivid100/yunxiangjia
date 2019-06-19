@@ -23,7 +23,8 @@ class Test
 	public function wechat()
     {
     	$wechat = new Wechat();
-    	$res = $wechat->unifiedorder('213123123ddasd',1000);
+    	$res = $wechat->getAccessToken();
+        echo '23123';
     	print_r($res);
 
     }

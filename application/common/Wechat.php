@@ -13,15 +13,14 @@ class Wechat
     	$this->secret = config('api.secret');
         $this->mch_id = config('api.mch_id');
         $this->key = config('api.key');
-        $cache = new Cache();
-        $this->access_token = $cache->get('access_token');
+        $this->access_token = config('access_token');
     }
 
     //获取access_token
     public function getAccessToken()
     {
         $url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=" . $this->appid . "&secret=" . $this->secret;
-        $res = json_decode(curlRequest($url), true);
+        return json_decode(curlRequest($url), true);
     }
 
     //获取openid
