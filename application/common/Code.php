@@ -1,9 +1,8 @@
-<<<<<<< HEAD
 <?php
 namespace app\common;
 class Code
 {
-    public function send($code = 200, $result = null)
+    public static function send($code = 200, $result = null)
     {
         $index[999]['message'] = (string)$result;
         $index[200]['message'] = 'success';

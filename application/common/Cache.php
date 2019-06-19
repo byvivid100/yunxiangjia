@@ -8,7 +8,7 @@ class Cache
     function __construct($host = '127.0.0.1', $port = 6379)
     {
         $this->redis = new \Redis();
-    	$this->redis->pconnect($host, $port);
+    	$this->redis->connect($host, $port);
     }
 
     //返回连接对象

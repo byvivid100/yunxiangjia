@@ -35,8 +35,9 @@ class Test
     	// $res = $redis->get('mjf');
     	// $res = $cache->client();
     	// print_r($res);
-    	$cache->set('42', 'access_token', 'access_token');
-    	$res2 = $cache->get('access_token', 'access_token');
+        print_r($cache->client()->ping());exit;
+    	$cache->set('42222', 'access_token', 'access_token', true);
+    	$res2 = $cache->get('access_token', 'access_token', true);
     	if ($res2 === null) echo 222;
     	print_r($res2);
     	// $redis = connRedis();

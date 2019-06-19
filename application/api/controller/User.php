@@ -3,6 +3,7 @@ namespace app\api\controller;
 
 use think\Controller;
 use app\common\Cache;
+use app\common\Code;
 use app\common\Wechat;
 
 class User extends Controller
@@ -49,7 +50,8 @@ class User extends Controller
     public function findUser()
     {
         $input = input();
-        $res = model('User')->getUser($input);
+        $res = model('User')->searchUser($input['uuid']);
+        Code::send(200, $res);
     }
 
     public function updateUser()

@@ -11,6 +11,7 @@ class Before
         }
     	$cache = new \app\common\Cache();
         $wechat = new \app\common\Wechat();
+
         //获取uuid
     	$uuid = $cache->get('uuid', $request->param('openid'), true);
     	if (empty($uuid)) {
