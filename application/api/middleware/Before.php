@@ -45,8 +45,8 @@ class Before
             if (empty($access_token)) {
                 $res = $wechat->getAccessToken();
                 if (empty($res['errcode'])) {
-                    $cache->set($res['access_token'], 'access_token', null, ture, 7000);
-                    $cache->set($res['expires_in'], 'expires_in', null, ture, 7000);
+                    $cache->set($res['access_token'], 'access_token', null, true, 7000);
+                    $cache->set($res['expires_in'], 'expires_in', null, true, 7000);
                     $access_token = $res['access_token'];
                 }
                 else {
