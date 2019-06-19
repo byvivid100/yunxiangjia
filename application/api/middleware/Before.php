@@ -34,7 +34,7 @@ class Before
             if ($cache->get('sign_' . $request->param('sign'), null, true)) {
                 exit('签名重复，稍后再试');
             }
-        	$sign = sign($request);
+        	$sign = sign($request->param());
         	if ($sign !== $request->param('sign')) {
         		exit('签名错误');
         	}
