@@ -43,7 +43,7 @@ class Before
             //获取access_token
             $access_token = $cache->get('access_token');
             if (empty($access_token)) {
-                $access_token = $wechat->getAccessToken();
+                $res = $wechat->getAccessToken();
                 if (empty($res['errcode'])) {
                     $cache->set($res['access_token'], 'access_token', null, ture, 7000);
                     $cache->set($res['expires_in'], 'expires_in', null, ture, 7000);
