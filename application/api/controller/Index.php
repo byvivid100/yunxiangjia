@@ -17,22 +17,26 @@ class Index extends Controller
         $wechat = new Wechat();
         $res = $wechat->code2Session($input['js_code']);
         if (!empty($res['errcode'])) {
-            return $res['errmsg'];
+            Code::send(500, $res);
         }
+        
+        $openid = db('user')->where(['openid' => $res['openid']])->value('openid');
+        if (!empty($openid))
+            Code::send(200, $openid);
 
-        \Db::transaction(function(){
+        \Db::transaction(function() use($res) {
             $uuid = makeUuid();
             $user = model('User')->insertUser($uuid, $res['openid']);
             $user_record = model('UserRecord')->insertUserRecord($uuid, 'Mini Program');
             $user_account = model('UserAccount')->insertAccount($uuid);
+            if (empty($user)) {
+                return 'user insert error';
+            }
+            $cache = new Cache();
+            $cache->set($res['session_key'], 'session_key', $res['openid'], true);
+            $cache->set($uuid, 'uuid', $res['openid'], true);
+            Code::send(200, $res['openid']);
         });
-        if (empty($user)) {
-            return 'error';
-        }
-        $cache = new Cache();
-        $cache->set($res['session_key'], 'session_key', $res['openid'], true);
-        $cache->set($uuid, 'uuid', $res['openid'], true);
-        Code::send(200, $res['openid']);
     }
 
     public function resetAccessToken($sign)

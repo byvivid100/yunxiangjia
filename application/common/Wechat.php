@@ -26,7 +26,7 @@ class Wechat
     //获取openid
     public function code2Session($js_code)
     {
-        $url = "https://api.weixin.qq.com/sns/jscode2session&appid=" . $this->appid . "&secret=" . $this->secret . "&js_code=" . $js_code . "&grant_type=authorization_code";
+        $url = "https://api.weixin.qq.com/sns/jscode2session?appid=" . $this->appid . "&secret=" . $this->secret . "&js_code=" . $js_code . "&grant_type=authorization_code";
         return json_decode(curlRequest($url), true);
     }
 

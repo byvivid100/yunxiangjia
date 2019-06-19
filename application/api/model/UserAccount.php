@@ -7,9 +7,9 @@ use app\common\Cache;
 class UserAccount extends Model
 {
 
-    public function insertAccount($input)
+    public function insertAccount($uuid)
     {
-        $map['uuid'] = $input['uuid'];
+        $map['uuid'] = $uuid;
         $map['amount'] = 0;
         $map['tail'] = 0;
         $map['gift'] = 0;

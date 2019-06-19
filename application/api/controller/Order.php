@@ -55,10 +55,10 @@ class Order extends Controller
                 if ($propety['status'] <> 5) 
                     Code::send(999, '商品在非销售状态');
                 $count = $propety['count'] + 1;
-                $res = db('propety')->where('id' => $propety['id'])->update(['count' => $count, 'update_time' => $_SERVER['REQUEST_TIME']]);
+                $res = db('propety')->where(['id' => $propety['id']])->update(['count' => $count, 'update_time' => $_SERVER['REQUEST_TIME']]);
             }
 
-            $res = db('order')->where('id' => $order['id'])->update(['status' => $status, 'status2' => $status2, 'update_time' => $_SERVER['REQUEST_TIME']]);
+            $res = db('order')->where(['id' => $order['id']])->update(['status' => $status, 'status2' => $status2, 'update_time' => $_SERVER['REQUEST_TIME']]);
         });
         Code::send(200, $res);
     }
@@ -94,13 +94,13 @@ class Order extends Controller
             }
             //卖家置成功，买家卖家服务单经纪人同时成功，其他买家订单和服务单失败，商品置成功
             else if ($utype == 1){
-                $res = db('propety')->where('id' => $order['ppid'])->update(['status' => 9, 'update_time' => $_SERVER['REQUEST_TIME']]);
-                $res = db('apply')->where('id' => $order['target_apply_id'])->update(['status2' => 9, 'update_time' => $_SERVER['REQUEST_TIME']]);
+                $res = db('propety')->where(['id' => $order['ppid']])->update(['status' => 9, 'update_time' => $_SERVER['REQUEST_TIME']]);
+                $res = db('apply')->where(['id' => $order['target_apply_id']])->update(['status2' => 9, 'update_time' => $_SERVER['REQUEST_TIME']]);
                 $apply_ids = db('order')->where(['target_apply_id' => $order['target_apply_id'], 'status' => 5])->column('apply_id');
                 foreach ($apply_ids as $id) {
                     $status2 = ($id == $order['apply_id']) ? 9 : -2;
-                    $res = db('apply')->where('id' => $id)->update(['status2' => $status2, 'update_time' => $_SERVER['REQUEST_TIME']]);
-                    $res = db('order')->where('apply_id' => $id)->update(['status2' => $status2, 'update_time' => $_SERVER['REQUEST_TIME']]);
+                    $res = db('apply')->where(['id' => $id])->update(['status2' => $status2, 'update_time' => $_SERVER['REQUEST_TIME']]);
+                    $res = db('order')->where(['apply_id' => $id])->update(['status2' => $status2, 'update_time' => $_SERVER['REQUEST_TIME']]);
                 }
             }
         });
@@ -132,12 +132,12 @@ class Order extends Controller
         \Db::transaction(function(){
             //买家置失败
             if ($utype == 0){
-                $res = db('order')->where('id' => $order['id'])->update(['status' => -1, 'update_time' => $_SERVER['REQUEST_TIME']]);
+                $res = db('order')->where(['id' => $order['id']])->update(['status' => -1, 'update_time' => $_SERVER['REQUEST_TIME']]);
                 $res = db('apply')->where(['id' => $order['apply_id']])->update(['status2' => -1, 'update_time' => $_SERVER['REQUEST_TIME']]);
             }
             //卖家置失败
             else if ($utype == 1){
-                $res = db('order')->where('id' => $order['id'])->update(['status2' => -1, 'update_time' => $_SERVER['REQUEST_TIME']]);
+                $res = db('order')->where(['id' => $order['id']])->update(['status2' => -1, 'update_time' => $_SERVER['REQUEST_TIME']]);
                 $res = db('apply')->where(['id' => $order['apply_id']])->update(['status2' => -1, 'update_time' => $_SERVER['REQUEST_TIME']]);
             }
         });

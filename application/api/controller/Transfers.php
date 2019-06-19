@@ -47,7 +47,7 @@ class Transfers extends Controller
         $input = input();
         if (empty($input['order_no'])) exit;
         $transfers = model('UserTransfers')->searchTransfers($input['order_no']);
-        $res = db('user_transfers')->where('id' => $transfers['id'])->update(['status' => -1, 'update_time' => $_SERVER['REQUEST_TIME']]);
+        $res = db('user_transfers')->where(['id' => $transfers['id']])->update(['status' => -1, 'update_time' => $_SERVER['REQUEST_TIME']]);
         Code::send(200, $res);
     }
 

@@ -67,7 +67,7 @@ class Apply extends Controller
                 $order = model('Order')->insertOrder($apply, $propety);
             }
 
-            $res = db('apply')->where('id' => $input['id'])->update(['status' => $status, 'status2' => $status2, 'update_time' => $_SERVER['REQUEST_TIME']]);
+            $res = db('apply')->where(['id' => $input['id']])->update(['status' => $status, 'status2' => $status2, 'update_time' => $_SERVER['REQUEST_TIME']]);
         });
         Code::send(200, $res);
     }
@@ -91,7 +91,7 @@ class Apply extends Controller
                     $propety = model('Propety')->searchPropety($apply['ppid']);
                     $order = model('Order')->insertOrder($apply, $propety);
                 }
-                $res = db('apply')->where('id' => $apply['id'])->update(['status' => $status, 'update_time' => $_SERVER['REQUEST_TIME']]);
+                $res = db('apply')->where(['id' => $apply['id']])->update(['status' => $status, 'update_time' => $_SERVER['REQUEST_TIME']]);
             }
         });
         Code::send(200, $res);
@@ -112,7 +112,7 @@ class Apply extends Controller
                 Code::send(500);
             if (empty($res['return_msg'])) {    //非微信支付
                 $status = 10;
-                $res = db('apply')->where('id' => $apply['id'])->update(['status' => $status, 'status2' => $status, 'update_time' => $_SERVER['REQUEST_TIME']]);
+                $res = db('apply')->where(['id' => $apply['id']])->update(['status' => $status, 'status2' => $status, 'update_time' => $_SERVER['REQUEST_TIME']]);
             }
         });
         Code::send(200, $res);
@@ -131,7 +131,7 @@ class Apply extends Controller
     }
 
     //经纪人置成功
-    public function succByUser()
+    public function succByAgent()
     {  
         $input = input();
         if (empty($input['id'])) exit;
@@ -144,10 +144,10 @@ class Apply extends Controller
     { 
         \Db::transaction(function(){
             if ($utype == 0){
-                $res = db('apply')->where('id' => $apply['id'])->update(['status' => 9, 'update_time' => $_SERVER['REQUEST_TIME']]);
+                $res = db('apply')->where(['id' => $apply['id']])->update(['status' => 9, 'update_time' => $_SERVER['REQUEST_TIME']]);
             }
             else if ($utype == 1){
-                $res = db('apply')->where('id' => $apply['id'])->update(['status2' => 9, 'update_time' => $_SERVER['REQUEST_TIME']]);
+                $res = db('apply')->where(['id' => $apply['id']])->update(['status2' => 9, 'update_time' => $_SERVER['REQUEST_TIME']]);
             }
         });
         return $res;
@@ -178,24 +178,24 @@ class Apply extends Controller
     {  
         \Db::transaction(function(){
             if ($utype == 0){
-                $res = db('apply')->where('id' => $apply['id'])->update(['status' => -1, 'update_time' => $_SERVER['REQUEST_TIME']]);
+                $res = db('apply')->where(['id' => $apply['id']])->update(['status' => -1, 'update_time' => $_SERVER['REQUEST_TIME']]);
             }
             else if ($utype == 1){
-                $res = db('apply')->where('id' => $apply['id'])->update(['status2' => -1, 'update_time' => $_SERVER['REQUEST_TIME']]);
+                $res = db('apply')->where(['id' => $apply['id']])->update(['status2' => -1, 'update_time' => $_SERVER['REQUEST_TIME']]);
             }
 
             //卖家置失败，订单关联的所有买家也失败
             if ($apply['type'] == 11 || $apply['type'] == 12 || $apply['type'] == 13) {
-                $res = db('propety')->where('id' => $apply['ppid'])->update(['status' => -1, 'update_time' => $_SERVER['REQUEST_TIME']]);
+                $res = db('propety')->where(['id' => $apply['ppid']])->update(['status' => -1, 'update_time' => $_SERVER['REQUEST_TIME']]);
                 $apply_ids = db('order')->where(['target_apply_id' => $apply['id'], 'status' => 5])->column('apply_id');
                 foreach ($apply_ids as $id) {
-                    $res = db('apply')->where('id' => $id)->update(['status2' => -2, 'update_time' => $_SERVER['REQUEST_TIME']]);
-                    $res = db('order')->where('apply_id' => $id)->update(['status2' => -2, 'update_time' => $_SERVER['REQUEST_TIME']]);
+                    $res = db('apply')->where(['id' => $id])->update(['status2' => -2, 'update_time' => $_SERVER['REQUEST_TIME']]);
+                    $res = db('order')->where(['apply_id' => $id])->update(['status2' => -2, 'update_time' => $_SERVER['REQUEST_TIME']]);
                 }
             }
             //买家置失败
             else if ($apply['type'] == 2 || $apply['type'] == 3) {
-                $res = db('order')->where('apply_id' => $apply['id'])->update(['status' => -1, 'update_time' => $_SERVER['REQUEST_TIME']]);
+                $res = db('order')->where(['apply_id' => $apply['id']])->update(['status' => -1, 'update_time' => $_SERVER['REQUEST_TIME']]);
             }
         });
         return $res;

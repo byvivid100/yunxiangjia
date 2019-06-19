@@ -15,7 +15,7 @@ class Propety extends Controller
         if (empty($input['id'])) exit;
         \Db::transaction(function(){
             $res = model('Propety')->insertPropety($input);
-            $res2 = db('apply')->where('id' => $input['id'])->update(['status2' => 5, 'ppid' =>$res, 'update_time' => $_SERVER['REQUEST_TIME']]);
+            $res2 = db('apply')->where(['id' => $input['id']])->update(['status2' => 5, 'ppid' =>$res, 'update_time' => $_SERVER['REQUEST_TIME']]);
         });
         Code::send(200, $res);
     }
