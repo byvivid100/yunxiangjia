@@ -24,7 +24,7 @@ class UserTransfers extends Model
         $cache = new Cache();
         $res = $cache->get('usertransfers', $order_no);
         if ($res === null) {
-            $res = self::where('order_no' => $order_no)->find();
+            $res = self::where(['order_no' => $order_no])->find();
             $cache->set($res, 'usertransfers', $order_no);
         }
         return $res;
@@ -35,7 +35,7 @@ class UserTransfers extends Model
         $cache = new Cache();
         $res = $cache->get('usertransfers_transferslist', $uuid);
         if ($res === null) {
-            $res = self::where('uuid' => $uuid)->select();
+            $res = self::where(['uuid' => $uuid])->select();
             $cache->set($res, 'usertransfers_transferslist', $uuid);
         }
         return $res;

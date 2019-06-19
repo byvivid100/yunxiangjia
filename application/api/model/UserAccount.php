@@ -28,7 +28,7 @@ class UserAccount extends Model
         $cache = new Cache();
         $res = $cache->get('useraccount', $uuid);
         if ($res === null) {
-            $res = self::where('uuid' => $uuid)->find();
+            $res = self::where(['uuid' => $uuid])->find();
             $cache->set($res, 'useraccount', $uuid);
         }
         return $res;

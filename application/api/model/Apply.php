@@ -43,7 +43,7 @@ class Apply extends Model
         $cache = new Cache();
         $res = $cache->get('apply_userlist', $user_id);
         if ($res === null) {
-            $res = self::where('user_id' => $user_id)->select();
+            $res = self::where(['user_id' => $user_id])->select();
             $cache->set($res, 'apply_userlist', $user_id);
         }
         return $res;
@@ -54,7 +54,7 @@ class Apply extends Model
         $cache = new Cache();
         $res = $cache->get('apply_agentlist', $agent_id);
         if ($res === null) {
-            $res = self::where('agent_id' => $agent_id)->select();
+            $res = self::where(['agent_id' => $agent_id])->select();
             $cache->set($res, 'apply_agentlist', $agent_id);
         }
         return $res;

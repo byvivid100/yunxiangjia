@@ -44,7 +44,7 @@ class Order extends Model
         $cache = new Cache();
         $res = $cache->get('order_buylist', $agent_id);
         if ($res === null) {
-            $res = self::where('agent_id' => $agent_id)->select();
+            $res = self::where(['agent_id' => $agent_id])->select();
             $cache->set($res, 'order_buylist', $agent_id);
         }
         return $res;
@@ -55,7 +55,7 @@ class Order extends Model
         $cache = new Cache();
         $res = $cache->get('order_selllist', $target_agent_id);
         if ($res === null) {
-            $res = self::where('target_agent_id' => $target_agent_id)->select();
+            $res = self::where(['target_agent_id' => $target_agent_id])->select();
             $cache->set($res, 'order_selllist', $target_agent_id);
         }
         return $res;

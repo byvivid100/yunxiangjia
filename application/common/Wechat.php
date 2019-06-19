@@ -13,7 +13,7 @@ class Wechat
     	$this->secret = config('api.secret');
         $this->mch_id = config('api.mch_id');
         $this->key = config('api.key');
-        $this->access_token = config('access_token');
+        $this->access_token = config('api.access_token');
     }
 
     //获取access_token

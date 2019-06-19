@@ -4,7 +4,8 @@ class Code
 {
     public static function send($code = 200, $result = null)
     {
-        $index[999]['message'] = (string)$result;
+        if ($code == 999)
+            $index[999]['message'] = (string)$result;
         $index[200]['message'] = 'success';
         $index[500]['message'] = 'error';
 

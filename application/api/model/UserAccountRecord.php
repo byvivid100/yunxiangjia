@@ -32,7 +32,7 @@ class UserAccountRecord extends Model
         $cache = new Cache();
         $res = $cache->get('useraccountrecord_recordlist', $uuid);
         if ($res === null) {
-            $res = self::where('uuid' => $uuid)->select();
+            $res = self::where(['uuid' => $uuid])->select();
             $cache->set($res, 'useraccountrecord_recordlist', $uuid);
         }
         return $res;

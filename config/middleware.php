@@ -16,6 +16,7 @@ return [
     // 默认中间件命名空间
     'default_namespace' => 'app\\http\\middleware\\',
 
+    'sign' => 'app\\api\\middleware\\Sign::class',
     'before' => 'app\\api\\middleware\\Before::class',
     'after' => 'app\\api\\middleware\\After::class',
 ];

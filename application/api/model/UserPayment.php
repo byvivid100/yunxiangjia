@@ -25,7 +25,7 @@ class UserPayment extends Model
         $cache = new Cache();
         $res = $cache->get('userpayment', $order_no);
         if ($res === null) {
-            $res = self::where('order_no' => $order_no)->find();
+            $res = self::where(['order_no' => $order_no])->find();
             $cache->set($res, 'userpayment', $order_no);
         }
         return $res;
@@ -36,7 +36,7 @@ class UserPayment extends Model
         $cache = new Cache();
         $res = $cache->get('userpayment_paymentlist', $uuid);
         if ($res === null) {
-            $res = self::where('uuid' => $uuid)->select();
+            $res = self::where(['uuid' => $uuid])->select();
             $cache->set($res, 'userpayment_paymentlist', $uuid);
         }
         return $res;
