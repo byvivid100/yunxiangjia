@@ -18,33 +18,30 @@ class Index extends Controller
         $res = $wechat->code2Session($input['js_code']);
         if (!empty($res['errcode'])) {
             Code::send(500, $res);
+            // $res['openid'] = 'oL-pK5AaBSUrfzX58laKEV75pJb4';
         }
         
         \Db::transaction(function() use($res) {
             $cache = new Cache();
+            //锁
+            $cache->lock('index_initbycode_' . $res['openid']);
             $uuid = $cache->get('uuid', $res['openid'], true);
             if ($uuid === null) {
                 $openid = db('user')->where(['openid' => $res['openid']])->value('openid');
+                if (empty($openid)) {
+                    //账户不存在
+                    $uuid = makeUuid();
+                    $user = model('User')->insertUser($uuid, $res['openid']);
+                    $user_record = model('UserRecord')->insertUserRecord($uuid, 'Mini Program');
+                    $user_account = model('UserAccount')->insertAccount($uuid);
+                    $cache->set($res['session_key'], 'session_key', $res['openid'], true);
+                    $cache->set($uuid, 'uuid', $res['openid'], true);
+                }
             }
-            else {
-                $openid = $res['openid'];
-            }
-            if (!empty($openid))
-                Code::send(200, $res['openid']);
-
-            //账户不存在
-            $uuid = makeUuid();
-            $user = model('User')->insertUser($uuid, $res['openid']);
-            $user_record = model('UserRecord')->insertUserRecord($uuid, 'Mini Program');
-            $user_account = model('UserAccount')->insertAccount($uuid);
-            if (empty($user)) {
-                return 'user insert error';
-            }
-            $cache = new Cache();
-            $cache->set($res['session_key'], 'session_key', $res['openid'], true);
-            $cache->set($uuid, 'uuid', $res['openid'], true);
+            $cache->unlock('index_initbycode_' . $res['openid']);
             Code::send(200, $res['openid']);
         });
+        Code::send(999, 'sql error');
     }
 
     public function resetAccessToken($sign)

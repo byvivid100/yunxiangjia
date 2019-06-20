@@ -54,11 +54,11 @@ class Cache
     } 
 
     //锁
-    public function lock($key, $expireTime = 60)
+    public function lock($key, $expireTime = 15)
     {
         $this->redis->select(5);
         while (!$this->redis->setnx($key, 1)) {
-            sleep(2);
+            sleep(1);
         }
         $this->redis->expire($key, $expireTime);
     }
