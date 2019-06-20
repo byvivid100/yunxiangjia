@@ -20,11 +20,19 @@ class Index extends Controller
             Code::send(500, $res);
         }
         
-        $openid = db('user')->where(['openid' => $res['openid']])->value('openid');
-        if (!empty($openid))
-            Code::send(200, $openid);
-
         \Db::transaction(function() use($res) {
+            $cache = new Cache();
+            $uuid = $cache->get('uuid', $res['openid'], true);
+            if ($uuid === null) {
+                $openid = db('user')->where(['openid' => $res['openid']])->value('openid');
+            }
+            else {
+                $openid = $res['openid'];
+            }
+            if (!empty($openid))
+                Code::send(200, $res['openid']);
+
+            //账户不存在
             $uuid = makeUuid();
             $user = model('User')->insertUser($uuid, $res['openid']);
             $user_record = model('UserRecord')->insertUserRecord($uuid, 'Mini Program');
