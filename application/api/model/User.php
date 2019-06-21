@@ -25,8 +25,10 @@ class User extends Model
     {
         $map['uuid'] = $uuid;
         $map['openid'] = $openid;
+        $map['type'] = 1;
+        $map['status'] = 0;
         $map['insert_time'] = $_SERVER['REQUEST_TIME'];
-        return self::insertGetId($map);
+        return self::save($map);
     }
 
 

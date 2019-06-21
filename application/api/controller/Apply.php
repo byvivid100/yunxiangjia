@@ -28,7 +28,8 @@ class Apply extends Controller
     public function detail()
     {
         $input = input();
-        if (empty($input['id'])) exit;
+        if (empty($input['id']))
+            Code::send(999, '参数错误');
         $apply = model('Apply')->searchApply($input['id']);
         if (!empty($apply['svid'])) {
             $apply['service'] = model('Service')->searchService($apply['svid']);
@@ -43,11 +44,13 @@ class Apply extends Controller
     public function checkApply()
     {
         $input = input();
-        if (empty($input['id'])) exit;
+        if (empty($input['id']))
+            Code::send(999, '参数错误');
         $apply = model('Apply')->searchApply($input['id']);
-        if ($apply['status'] <> 1) Code::send(500);
-        \Db::transaction(function(){
-            if($apply['type2'] == 1) {
+        if ($apply['status'] <> 1) 
+            Code::send(500);
+        \Db::transaction(function() use($apply) {
+            if($apply['type2'] == 2) {
                 $status = 2;
             }
             else {
@@ -60,16 +63,18 @@ class Apply extends Controller
             else {
                 $status2 = 5;
             }
-
             if ($status == 5 && ($apply['type'] == 2 || $apply['type'] == 3)) {
                 $propety = model('Propety')->searchPropety($apply['ppid']);
-                if ($propety['status'] <> 5) Code::send(500);
+                if (!$propety || $propety['status'] <> 5) 
+                    Code::send(500);
                 $order = model('Order')->insertOrder($apply, $propety);
             }
+            $res = \Db::name('apply')->where(['id' => $apply['id']])->update(['status' => $status, 'status2' => $status2, 'update_time' => $_SERVER['REQUEST_TIME']]);
 
-            $res = db('apply')->where(['id' => $input['id']])->update(['status' => $status, 'status2' => $status2, 'update_time' => $_SERVER['REQUEST_TIME']]);
+            if (!$res) 
+                Code::send(999, 'sql error');
         });
-        Code::send(200, $res);
+        Code::send(200);
     }
 
     //收费服务提前付款

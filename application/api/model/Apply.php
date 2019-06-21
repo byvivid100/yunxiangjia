@@ -10,20 +10,12 @@ class Apply extends Model
 
     public function insertApply($input)
     {
-        $map['svid'] = $input['svid'];
-        $map['title'] = $input['title'];
-        $map['ppid'] = $input['ppid'];
-        $map['user_id'] = $input['uuid'];
-        $map['agent_id'] = $input['agent_id'];
-        $map['form'] = $input['form'];
-        $map['type'] = $input['type'];
-        $map['type2'] = $input['type2'];
-        $map['status'] = 1;
-        $map['status2'] = 0;
-        $map['money'] = $input['money'];
-        $map['money_adv'] = $input['money_adv'];
-        $map['insert_time'] = $_SERVER['REQUEST_TIME'];
-        return self::insertGetId($map);
+        $input['user_id'] = $input['uuid'];
+        $input['status'] = 1;
+        $input['status2'] = 0;
+        $input['insert_time'] = $_SERVER['REQUEST_TIME'];
+        self::allowField(true)->save($input);
+        return $this->id;
     }
 
 
@@ -32,7 +24,7 @@ class Apply extends Model
         $cache = new Cache();
         $res = $cache->get('apply', $id);
         if ($res === null) {
-            $res = self::get($input['id']);
+            $res = self::get($id);
             $cache->set($res, 'apply', $id);
         }
         return $res;

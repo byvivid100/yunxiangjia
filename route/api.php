@@ -2,6 +2,8 @@
 
 Route::rule('api/resetAccessToken/:sign','api/Index/resetAccessToken', 'GET');
 
+Route::rule('api/payment/notify','api/Payment/notify', 'POST');
+
 Route::group('api', [
     'initByCode'   => 'api/Index/initByCode',
 ])->method('get')->middleware(['sign']);
@@ -53,8 +55,4 @@ Route::group('api', [
 
     'register'   => 'api/User/register',
     'applyAgent/apply'=>'api/ApplyAgent/apply'
-])->method('post')->middleware(['sign', 'before', 'after']);
-
-Route::group('api', [
-    'payment/notify'   => 'api/Payment/notify',
-])->method('post')->middleware(['after']);
+])->method('post')->middleware(['sign', 'before']);

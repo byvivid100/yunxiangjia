@@ -14,6 +14,13 @@ class Code
             'message' => $index[$code]['message'],
             'result' => $result
         ];
+
+        //清除redis缓存
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $cache = new \app\common\Cache();
+            $cache->flash(1);
+            $cache->flash(2);
+        }
         exit(json_encode($data, JSON_UNESCAPED_UNICODE));
     }
 }

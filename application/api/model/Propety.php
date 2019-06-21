@@ -10,15 +10,12 @@ class Propety extends Model
 
     public function insertPropety($input)
     {
-        $map['user_id'] = $input['user_id'];
-        $map['agent_id'] = $input['agent_id'];
-        $map['form'] = $input['form'];
-        $map['status'] = 0;
-        $map['count'] = 0;
-        $map['title'] = $input['title'];
-        $map['price'] = $input['price'];
-        $map['insert_time'] = $_SERVER['REQUEST_TIME'];
-        return self::insertGetId($map);
+        $input['agent_id'] = $input['uuid'];
+        $input['status'] = 0;
+        $input['count'] = 0;
+        $input['insert_time'] = $_SERVER['REQUEST_TIME'];
+        self::allowField(true)->save($input);
+        return $this->id;
     }
 
 
