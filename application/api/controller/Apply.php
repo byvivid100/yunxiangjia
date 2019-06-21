@@ -48,7 +48,9 @@ class Apply extends Controller
             Code::send(999, '参数错误');
         $apply = model('Apply')->searchApply($input['id']);
         if ($apply['status'] <> 1) 
-            Code::send(500);
+            Code::send(999, '状态错误1');
+        if ($apply['agent_id'] <> $input['uuid'])
+            Code::send(999, '用户错误');
         \Db::transaction(function() use($apply) {
             if($apply['type2'] == 2) {
                 $status = 2;
@@ -66,7 +68,7 @@ class Apply extends Controller
             if ($status == 5 && ($apply['type'] == 2 || $apply['type'] == 3)) {
                 $propety = model('Propety')->searchPropety($apply['ppid']);
                 if (!$propety || $propety['status'] <> 5) 
-                    Code::send(500);
+                    Code::send(999, '商品在非销售状态');
                 $order = model('Order')->insertOrder($apply, $propety);
             }
             $res = \Db::name('apply')->where(['id' => $apply['id']])->update(['status' => $status, 'status2' => $status2, 'update_time' => $_SERVER['REQUEST_TIME']]);
@@ -81,11 +83,12 @@ class Apply extends Controller
     public function payAdvByUser()
     {  
         $input = input();
-        if (empty($input['id'])) exit;
+        if (empty($input['id']))
+            Code::send(999, '参数错误');
         $apply = model('Apply')->searchApply($input['id']);
         if ($apply['status'] <> 2) 
-            Code::send(999, '付款状态错误2');
-        \Db::transaction(function(){
+            Code::send(999, '状态错误2');
+        \Db::transaction(function() use($apply) {
             $money = $apply['money_adv'];
             $res = controller('Payment')->pay($apply, 1, $money);
             if (!$res)
@@ -96,66 +99,84 @@ class Apply extends Controller
                     $propety = model('Propety')->searchPropety($apply['ppid']);
                     $order = model('Order')->insertOrder($apply, $propety);
                 }
-                $res = db('apply')->where(['id' => $apply['id']])->update(['status' => $status, 'update_time' => $_SERVER['REQUEST_TIME']]);
+                $res = \Db::name('apply')->where(['id' => $apply['id']])->update(['status' => $status, 'update_time' => $_SERVER['REQUEST_TIME']]);
             }
+
+            if (!$res) 
+                Code::send(999, 'sql error');
         });
-        Code::send(200, $res);
+        Code::send(200);
     }
 
     //服务完成后付款
     public function payAftByUser()
     {  
         $input = input();
-        if (empty($input['id'])) exit;
+        if (empty($input['id'])) 
+            Code::send(999, '参数错误');
         $apply = model('Apply')->searchApply($input['id']);
         if ($apply['status'] <> 9) 
-            Code::send(999, '付款状态错误9');
-        \Db::transaction(function(){
+            Code::send(999, '状态错误9');
+        \Db::transaction(function() use($apply) {
             $money = $apply['money'];
             $res = controller('Payment')->pay($apply, 2, $money);
             if (!$res)
                 Code::send(500);
             if (empty($res['return_msg'])) {    //非微信支付
                 $status = 10;
-                $res = db('apply')->where(['id' => $apply['id']])->update(['status' => $status, 'status2' => $status, 'update_time' => $_SERVER['REQUEST_TIME']]);
+                $res = \Db::name('apply')->where(['id' => $apply['id']])->update(['status' => $status, 'status2' => $status, 'update_time' => $_SERVER['REQUEST_TIME']]);
             }
+
+            if (!$res) 
+                Code::send(999, 'sql error');
         });
-        Code::send(200, $res);
+        Code::send(200);
     }
 
     //会员置成功
     public function succByUser()
     {  
         $input = input();
-        if (empty($input['id'])) exit;
+        if (empty($input['id']))
+             Code::send(999, '参数错误');
         $apply = model('Apply')->searchApply($input['id']);
         if ($apply['status2'] <> 9) 
             Code::send(999, '状态错误9');
-        $res = self::succApply($apply, 0);
-        Code::send(200, $res);
+        if ($apply['user_id'] <> $input['uuid'])
+            Code::send(999, '用户错误');
+
+        \Db::transaction(function() use($apply) {
+            $res = \Db::name('apply')->where(['id' => $apply['id']])->update(['status' => 9, 'update_time' => $_SERVER['REQUEST_TIME']]);
+
+            if (!$res) 
+                Code::send(999, 'sql error');
+        });
+        Code::send(200);
     }
 
     //经纪人置成功
     public function succByAgent()
     {  
         $input = input();
-        if (empty($input['id'])) exit;
+        if (empty($input['id']))
+             Code::send(999, '参数错误');
         $apply = model('Apply')->searchApply($input['id']);
-        $res = self::succApply($apply, 1);
-        Code::send(200, $res);
-    }
+        if ($apply['agent_id'] <> $input['uuid'])
+            Code::send(999, '用户错误');
+        if ($apply['type'] == 2 || $apply['type'] == 3) {
+            Code::send(999, '无法操作，等待交易订单完成');
+        }
+        else if ($apply['type'] == 11 || $apply['type'] == 12 || $apply['type'] == 13) {
+            Code::send(999, '无法操作，等待交易订单完成');
+        }
 
-    public function succApply($apply, $utype)
-    { 
-        \Db::transaction(function(){
-            if ($utype == 0){
-                $res = db('apply')->where(['id' => $apply['id']])->update(['status' => 9, 'update_time' => $_SERVER['REQUEST_TIME']]);
-            }
-            else if ($utype == 1){
-                $res = db('apply')->where(['id' => $apply['id']])->update(['status2' => 9, 'update_time' => $_SERVER['REQUEST_TIME']]);
-            }
+        \Db::transaction(function() use($apply) {
+            $res = \Db::name('apply')->where(['id' => $apply['id']])->update(['status2' => 9, 'update_time' => $_SERVER['REQUEST_TIME']]);
+
+            if (!$res) 
+                Code::send(999, 'sql error');
         });
-        return $res;
+        Code::send(200);
     }
 
     //会员置失败

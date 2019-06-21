@@ -11,7 +11,7 @@ class Propety extends Model
     public function insertPropety($input)
     {
         $input['agent_id'] = $input['uuid'];
-        $input['status'] = 0;
+        $input['status'] = 5;
         $input['count'] = 0;
         $input['insert_time'] = $_SERVER['REQUEST_TIME'];
         self::allowField(true)->save($input);
@@ -19,13 +19,13 @@ class Propety extends Model
     }
 
 
-    public function searchPropety($input)
+    public function searchPropety($id)
     {
         $cache = new Cache();
-        $res = $cache->get('propety', $input['id']);
+        $res = $cache->get('propety', $id);
         if ($res === null) {
-            $res = self::get($input['id']);
-            $cache->set($res, 'propety', $input['id']);
+            $res = self::get($id);
+            $cache->set($res, 'propety', $id);
         }
         return $res;
     }

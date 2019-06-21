@@ -10,8 +10,8 @@ class Order extends Model
     public function insertOrder($apply, $propety)
     {
         $map['apply_id'] = $apply['id'];
-        $target_apply_id = model('Apply')->where(['ppid' => $propety['ppid'], 'agent_id' => $propety['agent_id'], 'status' => 5)->value('id');
-        $map['target_apply_id'] = $target_agent_id;
+        $target_apply = model('Apply')->where(['ppid' => $propety['id'], 'agent_id' => $propety['agent_id']])->where('type', 'in', [11, 12, 13])->find();
+        $map['target_apply_id'] = $target_apply['id'];
         // $map['target_apply_id'] = $input['target_apply_id'];
         $map['ppid'] = $propety['id'];
         $map['title'] = $propety['title'];
@@ -21,7 +21,7 @@ class Order extends Model
         $map['target_agent_id'] = $propety['agent_id'];
         $map['form'] = $propety['form'];
         $map['type'] = $apply['type'];
-        // $map['type2'] = $propety['type2'];
+        $map['type2'] = $target_apply['type'];
         $map['status'] = 1;
         $map['status2'] = 0;
         $map['insert_time'] = $_SERVER['REQUEST_TIME'];
@@ -33,7 +33,7 @@ class Order extends Model
         $cache = new Cache();
         $res = $cache->get('order', $id);
         if ($res === null) {
-            $res = self::get($input['id']);
+            $res = self::get($id);
             $cache->set($res, 'order', $id);
         }
         return $res;
