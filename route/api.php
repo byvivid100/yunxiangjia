@@ -32,7 +32,6 @@ Route::group('api', [
 Route::group('api', [
 	'apply/checkApply'   => 'api/Apply/checkApply',
 	'apply/payAdvByUser'   => 'api/Apply/payAdvByUser',
-	'apply/payAftByUser'   => 'api/Apply/payAftByUser',
 	'apply/succByUser'   => 'api/Apply/succByUser',
 	'apply/succByAgent'   => 'api/Apply/succByAgent',
 	'apply/failByUser'   => 'api/Apply/failByUser',

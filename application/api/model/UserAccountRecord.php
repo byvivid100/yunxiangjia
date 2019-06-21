@@ -10,20 +10,13 @@ class UserAccountRecord extends Model
 
     public function insertAccountRecord($input)
     {
-        $map['uuid'] = $input['uuid'];
-        $map['order_no'] = $input['order_no'];
-        $map['title'] = $input['title'];
-        $map['change'] = $input['change'];
-        $map['amount'] = $input['amount'];
-        $map['tail'] = $input['tail'];
-        $map['gift'] = $input['gift'];
-        $map['frozen'] = $input['frozen'];
-        $map['payment'] = $input['payment'];
-        $map['transfers'] = $input['transfers'];
-        $map['type'] = $input['type'];
-        $map['status'] = 9;
-        $map['insert_time'] = $_SERVER['REQUEST_TIME'];
-        return self::insertGetId($map);
+        unset($input['id']);
+        unset($input['update_time']);
+
+        $input['status'] = 9;
+        $input['insert_time'] = $_SERVER['REQUEST_TIME'];
+        self::allowField(true)->save($input);
+        return $this->id;
     }
 
 

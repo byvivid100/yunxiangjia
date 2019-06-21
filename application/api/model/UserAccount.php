@@ -40,7 +40,7 @@ class UserAccount extends Model
         $map['tail'] = $input['tail'];
         $map['gift'] = $input['gift'];
         $map['frozen'] = $input['frozen'];
-        $map['payment'] = $input['charge'];
+        $map['payment'] = $input['payment'];
         $map['transfers'] = $input['transfers'];
         $map['update_time'] = $_SERVER['REQUEST_TIME'];
         return self::where('id', $input['id'])->update($map);

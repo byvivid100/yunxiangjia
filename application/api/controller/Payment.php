@@ -20,9 +20,9 @@ class Payment extends Controller
     //支付费用
     public function pay($apply, $type, $money)
     {
-        if ($money <= 0) return 'money < 0';
+        if ($money <= 0) 
+            return 'money < 0';
         $account = model('UserAccount')->searchAccount($apply['user_id']);
-        $order_no = makeOrder();
         if ($account['gift'] > $money) {
             $gift_money = $money;
             $amount_money = 0;
@@ -39,34 +39,31 @@ class Payment extends Controller
             $payment_money = $money - $account['gift'] - $account['amount'];
         }
 
+        $order_no = makeOrder();
         if ($payment_money == 0) {
-            \Db::transaction(function(){
-                $res = self::succPayment($account, $type, $order_no, $gift_money, $amount_money, $payment_money);
-            });
+            $res = self::succPayment($account->toArray(), $type, $order_no, $gift_money, $amount_money, $payment_money);
         }
         else {
-            \Db::transaction(function(){
-                if ($type == 1) {
-                    $payment['title'] = "付费服务";
-                }
-                else if ($type == 2) {
-                    $payment['title'] = "服务结束";
-                }
-                $payment['uuid'] = $apply['user_id'];
-                $payment['money'] = $payment_money;
-                $payment['amount_money'] = $amount_money;
-                $payment['gift_money'] = $gift_money;
-                $payment['apply_id'] = $apply['id'];
-                $payment['type'] = $type;
-                $payment['order_no'] = $order_no;
-                $payment['title'] .= "：<" . $apply['title'] . ">" . ($payment_money/100) . "元";
-                $res = model('UserPayment')->insertPayment($payment);
-                if ($res) {
-                    $wechat = new Wechat();
-                    $notify_url = "https://" . $_SERVER['SERVER_NAME'] . "/api/payment/notify"
-                    $res = $wechat->unifiedorder($payment['order_no'], $payment['money'], $notify_url);
-                }
-            });
+            if ($type == 1) {
+                $payment['title'] = "付费服务";
+            }
+            else if ($type == 2) {
+                $payment['title'] = "服务结束";
+            }
+            $payment['uuid'] = $apply['user_id'];
+            $payment['money'] = $payment_money;
+            $payment['amount_money'] = $amount_money;
+            $payment['gift_money'] = $gift_money;
+            $payment['apply_id'] = $apply['id'];
+            $payment['type'] = $type;
+            $payment['order_no'] = $order_no;
+            $payment['title'] .= "：<" . $apply['title'] . ">" . $payment_money . "元";
+            $res = model('UserPayment')->insertPayment($payment);
+            if ($res) {
+                $wechat = new Wechat();
+                $notify_url = "https://" . $_SERVER['SERVER_NAME'] . "/api/payment/notify";
+                $res = $wechat->unifiedorder($payment['order_no'], $payment['money'], $notify_url);
+            }
         }
         return $res;
     }
@@ -99,7 +96,7 @@ class Payment extends Controller
 
         if ($notify['result_code'] == 'FAIL') {
             \Db::transaction(function(){
-                $res = db('user_payment')->where('id' => $payment['id'])->update(['status' => -1, 'transaction_id' => $notify['transaction_id'], 'update_time' => $_SERVER['REQUEST_TIME']]);
+                $res = db('user_payment')->where(['id' => $payment['id']])->update(['status' => -1, 'transaction_id' => $notify['transaction_id'], 'update_time' => $_SERVER['REQUEST_TIME']]);
             });
         }
         else {
@@ -114,14 +111,14 @@ class Payment extends Controller
                         $propety = model('Propety')->searchPropety($apply['ppid']);
                         $order = model('Order')->insertOrder($apply, $propety);
                     }
-                    $res = db('apply')->where('id' => $apply['id'])->update(['status' => $status, 'update_time' => $_SERVER['REQUEST_TIME']]);
+                    $res = db('apply')->where(['id' => $apply['id']])->update(['status' => $status, 'update_time' => $_SERVER['REQUEST_TIME']]);
                 }
                 else if ($payment['type'] == 2) {
                     $status = 10;
-                    $res = db('apply')->where('id' => $apply['id'])->update(['status' => $status, 'status2' => $status, 'update_time' => $_SERVER['REQUEST_TIME']]);
+                    $res = db('apply')->where(['id' => $apply['id']])->update(['status' => $status, 'status2' => $status, 'update_time' => $_SERVER['REQUEST_TIME']]);
                 }
 
-                $res = db('user_payment')->where('id' => $payment['id'])->update(['status' => 9, 'transaction_id' => $notify['transaction_id'], 'update_time' => $_SERVER['REQUEST_TIME']]);
+                $res = db('user_payment')->where(['id' => $payment['id']])->update(['status' => 9, 'transaction_id' => $notify['transaction_id'], 'update_time' => $_SERVER['REQUEST_TIME']]);
             });
         }
 
@@ -147,7 +144,7 @@ class Payment extends Controller
             $account_record['gift'] -= $gift_money;
             $account_record['type'] = $type;
             $account_record['order_no'] = $order_no;
-            $account_record['title'] .= "-积分支付：<" . $apply['title'] . ">" . ($gift_money/100) . "元";
+            $account_record['title'] .= "-积分支付：" . $gift_money . "元";
             $res = model('UserAccountRecord')->insertAccountRecord($account_record);
         }
 
@@ -156,7 +153,7 @@ class Payment extends Controller
             $account_record['amount'] -= $amount_money;
             $account_record['type'] = $type;
             $account_record['order_no'] = $order_no;
-            $account_record['title'] .= "-余额支付：<" . $apply['title'] . ">" . ($amount_money/100) . "元";
+            $account_record['title'] .= "-余额支付：" . $amount_money . "元";
             $res = model('UserAccountRecord')->insertAccountRecord($account_record);
         }
 
@@ -165,7 +162,7 @@ class Payment extends Controller
             $account_record['payment'] -= $payment_money;
             $account_record['type'] = $type;
             $account_record['order_no'] = $order_no;
-            $account_record['title'] .= "-微信支付：<" . $apply['title'] . ">" . ($payment_money/100) . "元";
+            $account_record['title'] .= "-微信支付：" . $payment_money . "元";
             $res = model('UserAccountRecord')->insertAccountRecord($account_record);
         }
         $account['amount'] -= $amount_money;

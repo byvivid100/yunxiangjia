@@ -79,60 +79,6 @@ class Apply extends Controller
         Code::send(200);
     }
 
-    //收费服务提前付款
-    public function payAdvByUser()
-    {  
-        $input = input();
-        if (empty($input['id']))
-            Code::send(999, '参数错误');
-        $apply = model('Apply')->searchApply($input['id']);
-        if ($apply['status'] <> 2) 
-            Code::send(999, '状态错误2');
-        \Db::transaction(function() use($apply) {
-            $money = $apply['money_adv'];
-            $res = controller('Payment')->pay($apply, 1, $money);
-            if (!$res)
-                Code::send(500);
-            if (empty($res['return_msg'])) {    //非微信支付
-                $status = 5;
-                if ($apply['status2'] == 5 && ($apply['type'] == 2 || $apply['type'] == 3)) {
-                    $propety = model('Propety')->searchPropety($apply['ppid']);
-                    $order = model('Order')->insertOrder($apply, $propety);
-                }
-                $res = \Db::name('apply')->where(['id' => $apply['id']])->update(['status' => $status, 'update_time' => $_SERVER['REQUEST_TIME']]);
-            }
-
-            if (!$res) 
-                Code::send(999, 'sql error');
-        });
-        Code::send(200);
-    }
-
-    //服务完成后付款
-    public function payAftByUser()
-    {  
-        $input = input();
-        if (empty($input['id'])) 
-            Code::send(999, '参数错误');
-        $apply = model('Apply')->searchApply($input['id']);
-        if ($apply['status'] <> 9) 
-            Code::send(999, '状态错误9');
-        \Db::transaction(function() use($apply) {
-            $money = $apply['money'];
-            $res = controller('Payment')->pay($apply, 2, $money);
-            if (!$res)
-                Code::send(500);
-            if (empty($res['return_msg'])) {    //非微信支付
-                $status = 10;
-                $res = \Db::name('apply')->where(['id' => $apply['id']])->update(['status' => $status, 'status2' => $status, 'update_time' => $_SERVER['REQUEST_TIME']]);
-            }
-
-            if (!$res) 
-                Code::send(999, 'sql error');
-        });
-        Code::send(200);
-    }
-
     //会员置成功
     public function succByUser()
     {  
@@ -144,14 +90,19 @@ class Apply extends Controller
             Code::send(999, '状态错误9');
         if ($apply['user_id'] <> $input['uuid'])
             Code::send(999, '用户错误');
-
-        \Db::transaction(function() use($apply) {
-            $res = \Db::name('apply')->where(['id' => $apply['id']])->update(['status' => 9, 'update_time' => $_SERVER['REQUEST_TIME']]);
+        $res = null;
+        \Db::transaction(function() use($apply, $res) {
+            //支付服务费
+            $money = $apply['money'];
+            $res = controller('Payment')->pay($apply, 2, $money);
+            if (empty($res['return_code'])) {    //不用到微信支付
+                $res = \Db::name('apply')->where(['id' => $apply['id']])->update(['status' => 9, 'update_time' => $_SERVER['REQUEST_TIME']]);
+            }
 
             if (!$res) 
                 Code::send(999, 'sql error');
         });
-        Code::send(200);
+        Code::send(200, $res);
     }
 
     //经纪人置成功
@@ -226,4 +177,34 @@ class Apply extends Controller
         });
         return $res;
     }
+
+    //收费服务提前付款
+    public function payAdvByUser()
+    {  
+        $input = input();
+        if (empty($input['id']))
+            Code::send(999, '参数错误');
+        $apply = model('Apply')->searchApply($input['id']);
+        if ($apply['status'] <> 2) 
+            Code::send(999, '状态错误2');
+        \Db::transaction(function() use($apply) {
+            $money = $apply['money_adv'];
+            $res = controller('Payment')->pay($apply, 1, $money);
+            if (!$res)
+                Code::send(500);
+            if (empty($res['return_msg'])) {    //非微信支付
+                $status = 5;
+                if ($apply['status2'] == 5 && ($apply['type'] == 2 || $apply['type'] == 3)) {
+                    $propety = model('Propety')->searchPropety($apply['ppid']);
+                    $order = model('Order')->insertOrder($apply, $propety);
+                }
+                $res = \Db::name('apply')->where(['id' => $apply['id']])->update(['status' => $status, 'update_time' => $_SERVER['REQUEST_TIME']]);
+            }
+
+            if (!$res) 
+                Code::send(999, 'sql error');
+        });
+        Code::send(200);
+    }
+
 }
