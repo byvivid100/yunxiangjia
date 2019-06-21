@@ -19,6 +19,7 @@
     <link href="__CMS__/css/font-awesome.min.css?v=4.4.0" rel="stylesheet">
     <link href="__CMS__/css/animate.css" rel="stylesheet">
     <link href="__CMS__/css/style.css?v=4.1.0" rel="stylesheet">
+    <link href="__CMS__/css/plugins/toastr/toastr.min.css" rel="stylesheet">
     {block name="style"}{/block}
 </head>
 
@@ -30,24 +31,25 @@
     <!--右侧部分开始-->
     <div id="page-wrapper" class="gray-bg dashbard-1">
         <!--头部-->
-        {include file="../top" /}RR
+        {include file="../top" /}
         <!--内容-->
-        {block name="../content"}{/block}
+        {block name="content"}{/block}
     </div>
     <!--右侧部分结束-->
 </div>
 
-<!-- 全局__CMS__/js -->
+<!-- 全局s -->
 <script src="__CMS__/js/jquery.min.js?v=2.1.4"></script>
 <script src="__CMS__/js/bootstrap.min.js?v=3.3.6"></script>
 <script src="__CMS__/js/plugins/metisMenu/jquery.metisMenu.js"></script>
 <script src="__CMS__/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
 <script src="__CMS__/js/plugins/layer/layer.min.js"></script>
+<script src="__CMS__/js/plugins.js"></script>
+<script src="__CMS__/js/app.js"></script>
+<script src="__CMS__/js/plugins/toastr/toastr.min.js"></script>
 
-<!-- 自定义__CMS__/js -->
+<!-- 自定义js -->
 <script src="__CMS__/js/hAdmin.js?v=4.1.0"></script>
-<script type="text/javascript" src="__CMS__/js/index.js"></script>
-
 {block name="script"}{/block}
 </body>
 

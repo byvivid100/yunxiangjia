@@ -1,0 +1,79 @@
+{extend name="../layout"/}
+{block name="content"}
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>经纪人申请</h5>
+                </div>
+                <div class="ibox-content">
+
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                        <tr>
+                            <th>姓名</th>
+                            <th>所在地</th>
+                            <th>申请时间</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {volist name="list" id="vo" empty="暂时没有数据"}
+                        <tr>
+                            <td>{$vo.realname}</td>
+                            <td>{$vo.provincename}{$vo.cityname}</td>
+                            <td>{$vo.create_time}</td>
+                            <td>
+                                <div class="switch">
+                                    <div class="onoffswitch">
+                                        <input type="checkbox" {if $vo.status ==1}checked{/if} class="onoffswitch-checkbox" id="example{$vo.id}" data-id="{$vo.id}">
+                                        <label class="onoffswitch-label" for="example{$vo.id}">
+                                            <span class="onoffswitch-inner"></span>
+                                            <span class="onoffswitch-switch"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><a href="#" class="btn btn-xs btn-info">用户详情</a> </td>
+                        </tr>
+                        {/volist}
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+    $(function() {
+        expand();
+        $('.onoffswitch-checkbox').click(function () {
+            console.log(this.getAttribute('data-id'));
+            let st=$(this).prop('checked');
+            let status=0;
+            if(st===true) {
+                status=1
+            }
+            App.ajaxPost("{:url('changeStatus')}",{'id':this.getAttribute('data-id'),'status':status});
+            return false;
+        })
+    });
+    //展开
+    function expand() {
+        let agent=$('#agent');
+        agent.parent().removeClass('collapsed');
+        agent.addClass('in');
+    }
+    function test() {
+        toastr.success('等吗西游', '消息提示');
+    }
+</script>
+{/block}

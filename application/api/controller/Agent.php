@@ -13,13 +13,13 @@ namespace app\api\controller;
 use app\common\Code;
 use think\Controller;
 
-class Applyagent extends Controller
+class Agent extends Controller
 {
     //申请
     public function apply()
     {
         $params=request()->params();
-        $res=model('ApplyAgent')->apply($params);
+        $res=model('AgentApply')->apply($params);
         if($res)
         {
             Code::send(200,$res);
