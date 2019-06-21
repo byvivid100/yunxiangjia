@@ -53,5 +53,5 @@ Route::group('api', [
 	'transfers/cancel'   => 'api/Transfers/cancel',
 
     'register'   => 'api/User/register',
-    'applyAgent/apply'=>'api/ApplyAgent/apply'
+    'applyAgent/apply'=>'api/Agent/apply'
 ])->method('post')->middleware(['sign', 'before']);
