@@ -91,7 +91,7 @@ class Apply extends Controller
         if ($apply['user_id'] <> $input['uuid'])
             Code::send(999, '用户错误');
         $res = null;
-        \Db::transaction(function() use($apply, $res) {
+        \Db::transaction(function() use($apply, &$res) {
             //支付服务费
             $money = $apply['money'];
             $res = controller('Payment')->pay($apply, 2, $money);

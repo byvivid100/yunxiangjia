@@ -18,32 +18,33 @@ class Index extends Controller
         $res = $wechat->code2Session($input['js_code']);
         if (!empty($res['errcode'])) {
             Code::send(500, $res);
-            // $res['openid'] = 'a-pK5AaBSUrfzX58laKEV75pJb4';
+            // $res['openid'] = 'jjyy-pK5AaBSUrfzX58laKEV75pJb4';
         }
+        $data['openid'] = $res['openid'];
         
         $cache = new Cache();
         //锁
         $cache->lock('index_initbycode_' . $res['openid']);
         $cache->set($res['session_key'], 'session_key', $res['openid'], true);
-        $uuid = $cache->get('uuid', $res['openid'], true);
-        if ($uuid === null) {
-            $uuid = \Db::name('user')->where(['openid' => $res['openid']])->value('openid');
-            if (empty($uuid)) {
-                //账户不存在
-                $uuid = makeUuid();
-                \Db::transaction(function() use($res, $uuid) {
-                    $user = model('User')->insertUser($uuid, $res['openid']);
-                    $user_record = model('UserRecord')->insertUserRecord($uuid, 'Mini Program');
-                    $user_account = model('UserAccount')->insertAccount($uuid);
+        $user = \Db::name('user')->where(['openid' => $res['openid']])->find();
+        if (!$user) {
+            //账户不存在
+            $uuid = makeUuid();
+            $data['type'] = 1;
+            \Db::transaction(function() use($res, $uuid) {
+                $user = model('User')->insertUser($uuid, $res['openid']);
+                $user_record = model('UserRecord')->insertUserRecord($uuid, 'Mini Program');
+                $user_account = model('UserAccount')->insertAccount($uuid);
 
-                    if (!$user_account)
-                        Code::send(999, 'sql error');
-                });
-            }
-            $cache->set($uuid, 'uuid', $res['openid'], true);
+                if (!$user_account)
+                    Code::send(999, 'sql error');
+            });
+        }
+        else {
+            $data['type'] = $user['type'];
         }
         $cache->unlock('index_initbycode_' . $res['openid']);
-        Code::send(200, $res['openid']);
+        Code::send(200, $data);
     }
 
     public function resetAccessToken($sign)
