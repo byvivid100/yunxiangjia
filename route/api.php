@@ -12,10 +12,12 @@ Route::group('api', [
 	'account/detail'   => 'api/Account/detail',
 	'account/recordlist'   => 'api/Account/recordlist',
 
+	'apply/applylist'   => 'api/Apply/applylist',
 	'apply/detail'   => 'api/Apply/detail',
 	'apply/userlist'   => 'api/Apply/userlist',
 	'apply/agentlist'   => 'api/Apply/agentlist',
 
+	'order/orderlist'   => 'api/Order/orderlist',
 	'order/detail'   => 'api/Order/detail',
 	'order/buylist'   => 'api/Order/buylist',
 	'order/selllist'   => 'api/Order/selllist',

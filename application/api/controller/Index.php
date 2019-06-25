@@ -20,8 +20,8 @@ class Index extends Controller
             Code::send(500, $res);
             // $res['openid'] = 'jjyy-pK5AaBSUrfzX58laKEV75pJb4';
         }
-        $data['openid'] = $res['openid'];
         
+        $return['openid'] = $res['openid'];  
         $cache = new Cache();
         //锁
         $cache->lock('index_initbycode_' . $res['openid']);
@@ -30,7 +30,7 @@ class Index extends Controller
         if (!$user) {
             //账户不存在
             $uuid = makeUuid();
-            $data['type'] = 1;
+            $return['type'] = 1;
             \Db::transaction(function() use($res, $uuid) {
                 $user = model('User')->insertUser($uuid, $res['openid']);
                 $user_record = model('UserRecord')->insertUserRecord($uuid, 'Mini Program');
@@ -41,10 +41,10 @@ class Index extends Controller
             });
         }
         else {
-            $data['type'] = $user['type'];
+            $return['type'] = $user['type'];
         }
         $cache->unlock('index_initbycode_' . $res['openid']);
-        Code::send(200, $data);
+        Code::send(200, $return);
     }
 
     public function resetAccessToken($sign)

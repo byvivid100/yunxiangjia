@@ -20,9 +20,10 @@ class Propety extends Controller
             Code::send(999, '状态错误2');
         if ($apply['agent_id'] <> $input['uuid'])
             Code::send(999, '用户错误');
-        \Db::transaction(function() use($input) {
+        \Db::transaction(function() use($input, $apply) {
             $ppid = model('Propety')->insertPropety($input);
             $res = \Db::name('apply')->where(['id' => $input['apply_id']])->update(['status2' => 5, 'ppid' => $ppid, 'update_time' => $_SERVER['REQUEST_TIME']]);
+            $res = model('ApplyRecord')->insertApplyRecord($apply['agent_id'], $apply, 2, '经纪人录入商品');
 
             if (!$res) 
                 Code::send(999, 'sql error');

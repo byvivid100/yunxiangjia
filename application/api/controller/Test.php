@@ -11,9 +11,14 @@ class Test
 	public function index()
     {
     	// return makeOrder();
-        $cache = new Cache();
-        bind('cache',$cache);
-        print_r(app('cache')->client());
+        $return = null;
+        $aa['a'] = '2sdd';
+        $aa['b'] = 44;
+        \Db::transaction(function() use($aa, &$return) {
+            // var_dump($return);
+            $return = $aa; 
+        });    
+        print_r($_REQUEST);
     }
     public function sign()
     {

@@ -41,7 +41,7 @@ class Payment extends Controller
 
         $order_no = makeOrder();
         if ($payment_money == 0) {
-            $res = self::succPayment($account->toArray(), $type, $order_no, $gift_money, $amount_money, $payment_money);
+            $res = self::succPayment($account->toArray(), $type, $order_no, $gift_money, $amount_money, $payment_money, $apply['title']);
         }
         else {
             if ($type == 1) {
@@ -95,16 +95,16 @@ class Payment extends Controller
             Code::send(999, '订单已处理或失效');
 
         if ($notify['result_code'] == 'FAIL') {
-            \Db::transaction(function(){
+            \Db::transaction(function() use($payment) {
                 $res = db('user_payment')->where(['id' => $payment['id']])->update(['status' => -1, 'transaction_id' => $notify['transaction_id'], 'update_time' => $_SERVER['REQUEST_TIME']]);
             });
         }
         else {
             //成功
-            $account = model('UserAccount')->searchAccount($payment['uuid']);
-            $apply = model('Apply')->searchApply($payment['apply_id']);
-            \Db::transaction(function(){
-                $res = self::succPayment($account, $payment['type'], $payment['order_no'], $payment['gift_money'], $payment['amount_money'], $payment['money']);
+            \Db::transaction(function() use($payment) {
+                $account = model('UserAccount')->searchAccount($payment['uuid']);
+                $apply = model('Apply')->searchApply($payment['apply_id']);
+                $res = self::succPayment($account->toArray(), $payment['type'], $payment['order_no'], $payment['gift_money'], $payment['amount_money'], $payment['money'], $apply['title']);
                 if ($payment['type'] == 1) {
                     $status = 5;
                     if ($apply['status2'] == 5 && ($apply['type'] == 2 || $apply['type'] == 3)) {
@@ -112,10 +112,12 @@ class Payment extends Controller
                         $order = model('Order')->insertOrder($apply, $propety);
                     }
                     $res = db('apply')->where(['id' => $apply['id']])->update(['status' => $status, 'update_time' => $_SERVER['REQUEST_TIME']]);
+                    $res = model('ApplyRecord')->insertApplyRecord($apply['user_id'], $apply, 1, '会员支付提前服务费');
                 }
                 else if ($payment['type'] == 2) {
-                    $status = 10;
-                    $res = db('apply')->where(['id' => $apply['id']])->update(['status' => $status, 'status2' => $status, 'update_time' => $_SERVER['REQUEST_TIME']]);
+                    $status = 9;
+                    $res = db('apply')->where(['id' => $apply['id']])->update(['status' => $status, 'update_time' => $_SERVER['REQUEST_TIME']]);
+                    $res = model('ApplyRecord')->insertApplyRecord($apply['user_id'], $apply, 1, '会员置成功服务，支付服务费（微信支付）');
                 }
 
                 $res = db('user_payment')->where(['id' => $payment['id']])->update(['status' => 9, 'transaction_id' => $notify['transaction_id'], 'update_time' => $_SERVER['REQUEST_TIME']]);
@@ -129,7 +131,7 @@ class Payment extends Controller
     }
 
 
-    public function succPayment($account, $type, $order_no, $gift_money, $amount_money, $payment_money)
+    public function succPayment($account, $type, $order_no, $gift_money, $amount_money, $payment_money, $title = '')
     {
         $account_record = $account;
         if ($type == 1) {
@@ -144,7 +146,7 @@ class Payment extends Controller
             $account_record['gift'] -= $gift_money;
             $account_record['type'] = $type;
             $account_record['order_no'] = $order_no;
-            $account_record['title'] .= "-积分支付：" . $gift_money . "元";
+            $account_record['title'] .= "：<" . $title . ">-积分支付：" . $gift_money . "元";
             $res = model('UserAccountRecord')->insertAccountRecord($account_record);
         }
 
@@ -153,7 +155,7 @@ class Payment extends Controller
             $account_record['amount'] -= $amount_money;
             $account_record['type'] = $type;
             $account_record['order_no'] = $order_no;
-            $account_record['title'] .= "-余额支付：" . $amount_money . "元";
+            $account_record['title'] .= "：<" . $title . ">-余额支付：" . $amount_money . "元";
             $res = model('UserAccountRecord')->insertAccountRecord($account_record);
         }
 
@@ -162,7 +164,7 @@ class Payment extends Controller
             $account_record['payment'] -= $payment_money;
             $account_record['type'] = $type;
             $account_record['order_no'] = $order_no;
-            $account_record['title'] .= "-微信支付：" . $payment_money . "元";
+            $account_record['title'] .= "：<" . $title . ">-微信支付：" . $payment_money . "元";
             $res = model('UserAccountRecord')->insertAccountRecord($account_record);
         }
         $account['amount'] -= $amount_money;
